@@ -8,7 +8,7 @@ class RiskRegisterController extends Controller
 {
     //
 
-     public function create()
+    public function create()
     {
         return view('risk_register.create');
     }
