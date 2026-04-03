@@ -12,6 +12,7 @@ class PuncaRisiko extends Model
     protected $fillable = [
         'punca_risiko',
         'kategori_punca_risiko_id',
+        'pelan_mitigasi',
     ];
 
     public function kategoriPuncaRisiko()

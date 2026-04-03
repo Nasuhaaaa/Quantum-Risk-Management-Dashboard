@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Risiko extends Model
 {
     //
-    protected $table = 'risk_register';
+    protected $table = 'risiko';
     protected $fillable = [
         'nama_risiko',
         'sub_kategori_risiko_id',

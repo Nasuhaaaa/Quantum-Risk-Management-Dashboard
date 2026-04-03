@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\KategoriRisikoController;
+use App\Http\Controllers\RisikoController;
 use App\Http\Controllers\RiskRegisterController;
 use App\Http\Controllers\SubkategoriRisikoController;
+use App\Http\Controllers\KategoriPuncaRisikoController;
+use App\Http\Controllers\PuncaRisikoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,4 +29,23 @@ Route::get('/subkategori-risiko/create', [SubkategoriRisikoController::class, 'c
 
 Route::post('/subkategori-risiko', [SubkategoriRisikoController::class, 'store'])
     ->name('subkategori_risiko.store');
+
+Route::get('/risiko/create', [RisikoController::class, 'create'])
+    ->name('risiko.create');
+
+Route::post('/risiko', [RisikoController::class, 'store'])
+    ->name('risiko.store');
+
+Route::get('/kategori-punca-risiko/create', [KategoriPuncaRisikoController::class, 'create'])
+    ->name('kategori_punca_risiko.create');
+
+Route::post('/kategori-punca-risiko', [KategoriPuncaRisikoController::class, 'store'])
+    ->name('kategori_punca_risiko.store');
+
+Route::get('/punca-risiko/create', [PuncaRisikoController::class, 'create'])
+    ->name('punca_risiko.create');
+
+Route::post('/punca-risiko', [PuncaRisikoController::class, 'store'])
+    ->name('punca_risiko.store');
+
 
