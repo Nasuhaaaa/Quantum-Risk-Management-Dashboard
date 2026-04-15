@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\PuncaRisiko;
-use App\Models\Risiko;
 use Illuminate\Database\Eloquent\Model;
 
 class RegisterRisk extends Model
@@ -22,6 +20,11 @@ class RegisterRisk extends Model
         'kawalan_sedia_ada',
         'pelan_mitigasi'
     ];
+
+    public function cbom()
+    {
+        return $this->belongsTo(CBOM::class, 'cbom_id');
+    }
 
     public function risiko()
     {

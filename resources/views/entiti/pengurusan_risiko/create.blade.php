@@ -12,6 +12,8 @@
     </div>
 </div>
 
+<a href="{{ route('entiti.pengurusan_risiko.index') }}" class="btn btn-sm btn-secondary mb-3">← Kembali</a>
+
 <!-- Entity Info -->
 <div class="row g-3 mb-4">
     <div class="col-lg-6">
@@ -28,7 +30,7 @@
     </div>
 </div>
 
-<form method="POST" action="{{ route('risk_register.store') }}">
+<form method="POST" action="{{ route('entiti.pengurusan_risiko.store') }}">
     @csrf
 
     <!-- Maklumat CBOM Section -->

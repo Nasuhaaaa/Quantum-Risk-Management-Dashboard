@@ -1,0 +1,124 @@
+Todo
+
+this is a risk management Dashboard
+
+Title: Sistem Pengurusan Risiko Kuantum
+
+4 types of user
+1. Entiti (Agensi)
+2. Ketua Sektor
+3. Pengurusan
+4. Sistem Admin
+
+Dashboard View
+1. Entiti (Agensi) Dashboard
+    - Status Risiko (berdasarkan tahap risiko)
+    - Jumlah risiko didaftarkan
+    - bilangan dan percentage aset yang didaftarkan dan telah melalui risk assessment
+    - Tahap Risiko
+    - Pecahan Penarafan Risiko (Donut chart)
+    - 5 Risiko tertinggi dalam entiti (graf bar, x axis: Risiko, y axis: bilangan aset terjejas)
+    - Paparan ringkas untuk 3 aset paling memerlukan perhatian (berdasarkan tahap risiko)
+    - Entri Risiko terkini (table consist of Risiko, Aset, Skor Risiko, Tahap Risiko, Tarikh, Tindakan)
+2. Ketua Sektor Dashboard
+    - Peratusan Entiti Mengikut Tahap Indeks Risiko
+    - Risiko Tertinggi Merentas Entiti
+    - Senarai Tahap Risiko entiti (consist of Nama entiti, Tahap Risiko, Risiko Paling Kritikal, Tarikh Semakan)
+3. Admin Dashboard
+4. Pengurusan Dashboard
+    - Display all 11 sector (untuk user pilih)
+    - Tahap Risiko Setiap sektor (list)
+
+
+Table in Database
+1. Pengguna
+    - User_ID (PK)
+    - Kata_Laluan
+    - Jenis_Pengguna (FK kepada table Jenis Pengguna)
+    - ID_Agensi (FK kepada table Agensi)
+2. Agensi
+    - ID_Agensi (PK)
+    - Nama_Agensi
+    - No_Tel_Agensi
+    - Website
+    - Nama_PIC
+    - No_Tel_PIC
+    - Emel_PIC
+    - Sektor (FK kepada Table Sektor)
+    - Jenis_Perniagaan/Perhubungan
+3. Sektor
+    - ID_Sektor (PK)
+    - Nama_Sektor
+    - Keterangan_Sektor
+    - Ketua_Sektor
+    - Maklumat_Perhubungan_Sektor
+4. Inventori
+    - ID_Aset (PK)
+    - Jenis Aset
+    - Nama_Aset
+    - Lokasi/Pemilik
+    - Sistem_Legasi
+    - Catatan
+5. SBOM
+    - ID_SBOM (PK)
+    - ID_Aset (FK kepada table Inventori)
+    - Komponen&Versi
+    - Sub-Komponen
+    - URL
+    - Mod_Perkhidmatan
+    - Language/Framework
+    - Modules/Libraries
+    - External_APIs/Services
+    - In-house/Vendor
+    - Nama_Vendor
+    - Kepakaran_Kriptografi
+5. CBOM
+    - ID_CBOM (PK)
+    - ID_SBOM (FK kepada table SBOM)
+    - Algoritma_Kriptografi
+    - Panjang_Kunci
+    - Tujuan/Penggunaan
+    - Library/Modules
+    - Kategori_Data
+    - Sokongan_Crypto-agility
+6. Jenis Pengguna
+    - Role_ID (PK)
+    - Jenis_Pengguna
+    - Keterangan
+
+Menu
+1. Entiti (Agensi)
+    - Pengurusan Risiko
+        - Daftar Risiko
+        - Senarai Daftar Risiko
+        - Laporan Penilaian Risiko
+    - Pengurusan Inventori
+        - Daftar Inventori
+        - Senarai Inventori
+    - Pengurusan Data
+
+2. Ketua Sektor
+    - Pengurusan Risiko
+        - Jana Laporan Penilaian Risiko
+    - Pengurusan Agensi
+        - Daftar Entiti
+        - Senarai Entiti
+3. Pengurusan
+    - Pengurusan Risiko
+        - Senarai Daftar Risiko
+        - Semak dan Sahkan Daftar Risiko
+        - Laporan Penilaian Risiko
+
+
+4. Sistem Admin
+    - Pengurusan Pengguna
+        - Daftar Pengguna
+        - Senarai Pengguna
+    - Pengurusan Entiti
+        - Daftar Entiti
+        - Senarai Entiti
+    - Pengurusan Sektor
+        - Daftar Sektor
+        - Senarai Sektor
+    - Pengurusan Rujukan dan Sumber Sokongan
+
