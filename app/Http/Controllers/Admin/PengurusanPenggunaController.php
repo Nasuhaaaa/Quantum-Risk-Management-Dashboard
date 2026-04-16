@@ -134,5 +134,3 @@ class PengurusanPenggunaController extends Controller
                        ->with('success', 'Pengguna berjaya dihapus');
     }
 }
-
-}

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Entiti;
 
 use App\Http\Controllers\Controller;
 use App\Models\Inventori;
+use App\Models\SBOM;
 use Illuminate\Http\Request;
 
 class PengurusanInventoriController extends Controller
@@ -13,22 +14,12 @@ class PengurusanInventoriController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Inventori::query();
+        // Fetch inventory data for the user's agency
+        $user = auth()->user();
+        $inventori = Inventori::where('agensi_id', $user->ID_Agensi)->get();
 
-        // Search by name
-        if ($request->filled('search')) {
-            $query->where('nama_aset', 'like', '%' . $request->search . '%')
-                  ->orWhere('jenis_aset', 'like', '%' . $request->search . '%');
-        }
-
-        // Filter by status (simulated - would need status field in database)
-        if ($request->filled('status')) {
-            // TODO: Add status field to inventori table if needed
-        }
-
-        $inventories = $query->paginate(10);
-
-        return view('entiti.pengurusan_inventori.index', compact('inventories'));
+        // Pass data to the view
+        return view('entiti.pengurusan_inventori.index', compact('inventori'));
     }
 
     /**
@@ -70,9 +61,15 @@ class PengurusanInventoriController extends Controller
      */
     public function show($id)
     {
-        $inventory = Inventori::findOrFail($id);
+        $inventory = Inventori::select('id', 'nama_aset as nama_inventori', 'jenis_aset as kategori', 'sistem_legasi as bilangan', 'lokasi_pemilik as lokasi', 'catatan as keterangan', 'created_at')
+            ->findOrFail($id);
 
-        return view('entiti.pengurusan_inventori.show', compact('inventory'));
+        // Fetch related SBOMs for the inventory
+        $sboms = SBOM::select('id', 'komponen_versi', 'sub_komponen', 'url', 'mod_perkhidmatan', 'language_framework', 'modules_libraries', 'external_apis_services', 'in_house_vendor', 'nama_vendor', 'kepakaran_kriptografi', 'inventori_id')
+            ->where('inventori_id', $id)
+            ->get();
+
+        return view('entiti.pengurusan_inventori.show', compact('inventory', 'sboms'));
     }
 
     /**

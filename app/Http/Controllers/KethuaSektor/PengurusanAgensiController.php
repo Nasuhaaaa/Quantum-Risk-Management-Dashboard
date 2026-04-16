@@ -142,9 +142,3 @@ class PengurusanAgensiController extends Controller
                        ->with('success', 'Entiti berjaya dihapus');
     }
 }
-
-
-        return redirect()->route('ketua_sektor.pengurusan_agensi.index')
-                       ->with('success', 'Entiti berjaya dihapus');
-    }
-}

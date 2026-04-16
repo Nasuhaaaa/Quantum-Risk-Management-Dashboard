@@ -5,7 +5,7 @@
 @section('content')
     <div class="dashboard-header d-flex align-items-center justify-content-between">
         <div>
-            <h2>Papan Pemuka Entiti (Agensi)</h2>
+            <h2>Papan Pemuka Entiti ({{ $entitiName }})</h2>
             <p>Selamat datang, {{ auth()->user()->name }}. Uruskan dan pantau risiko dalam agensi anda.</p>
         </div>
         <div>

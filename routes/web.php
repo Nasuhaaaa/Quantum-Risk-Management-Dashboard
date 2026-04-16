@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\PengurusanEntitController;
 use App\Http\Controllers\Admin\PengurusanSektorController;
 use App\Http\Controllers\Admin\RujakanController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Entiti\SBOM\SBOMController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -72,9 +73,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('entiti')->name('entiti.')->group(function () {
         // Pengurusan Risiko
         Route::prefix('pengurusan-risiko')->name('pengurusan_risiko.')->group(function () {
-            Route::get('/', [EntitRisikoController::class, 'index'])->name('index');
-            Route::get('create', [EntitRisikoController::class, 'create'])->name('create');
-            Route::post('/', [EntitRisikoController::class, 'store'])->name('store');
+            Route::get('/', [RiskRegisterController::class, 'index'])->name('index');
+            Route::get('create', [RiskRegisterController::class, 'create'])->name('create');
+            Route::post('/', [RiskRegisterController::class, 'store'])->name('store');
             Route::get('{id}', [EntitRisikoController::class, 'show'])->name('show');
             Route::get('{id}/edit', [EntitRisikoController::class, 'edit'])->name('edit');
             Route::put('{id}', [EntitRisikoController::class, 'update'])->name('update');
@@ -91,6 +92,9 @@ Route::middleware('auth')->group(function () {
             Route::get('{id}/edit', [EntitInventoriController::class, 'edit'])->name('edit');
             Route::put('{id}', [EntitInventoriController::class, 'update'])->name('update');
             Route::delete('{id}', [EntitInventoriController::class, 'destroy'])->name('destroy');
+
+            // Add the detail_cbom route here
+            Route::get('sbom/{sbom_id}', [SBOMController::class, 'show'])->name('detail_cbom');
         });
 
         // Pengurusan Data
@@ -179,6 +183,11 @@ Route::middleware('auth')->group(function () {
             Route::get('log', [RujakanController::class, 'log'])->name('log');
         });
     });
+});
+
+// SBOM Routes
+Route::prefix('sbom')->name('sbom.')->group(function () {
+    Route::get('{sbom_id}', [SBOMController::class, 'show'])->name('show');
 });
 
 

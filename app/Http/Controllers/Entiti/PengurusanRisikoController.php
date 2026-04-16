@@ -4,11 +4,6 @@ namespace App\Http\Controllers\Entiti;
 
 use App\Http\Controllers\Controller;
 use App\Models\RegisterRisk;
-use App\Models\KategoriRisiko;
-use App\Models\SubKategoriRisiko;
-use App\Models\Risiko;
-use App\Models\KategoriPuncaRisiko;
-use App\Models\PuncaRisiko;
 use Illuminate\Http\Request;
 
 class PengurusanRisikoController extends Controller
@@ -49,48 +44,6 @@ class PengurusanRisikoController extends Controller
         $risks = $query->paginate(10);
 
         return view('entiti.pengurusan_risiko.index', compact('risks'));
-    }
-
-    /**
-     * Show the form for creating a new risk registration
-     */
-    public function create()
-    {
-        $kategoriRisiko = KategoriRisiko::all();
-        $subKategoriRisiko = SubKategoriRisiko::all();
-        $risiko = Risiko::all();
-        $kategoriPuncaRisiko = KategoriPuncaRisiko::all();
-        $puncaRisiko = PuncaRisiko::all();
-
-        return view('entiti.pengurusan_risiko.create', compact('kategoriRisiko', 'subKategoriRisiko', 'risiko', 'kategoriPuncaRisiko', 'puncaRisiko'));
-    }
-
-    /**
-     * Store a newly created risk registration in database
-     */
-    public function store(Request $request)
-    {
-        $user = auth()->user();
-
-        $validated = $request->validate([
-            'nama_risiko' => 'required|string|max:255',
-            'kategori_risiko_id' => 'required|exists:kategori_risiko,id',
-            'sub_kategori_risiko_id' => 'required|exists:sub_kategori_risiko,id',
-            'pemilik_risiko' => 'required|string|max:255',
-            'tahap_risiko' => 'required|in:Tinggi,Sederhana,Rendah',
-            'kemungkinan' => 'required|integer|min:1|max:5',
-            'kesan' => 'required|integer|min:1|max:5',
-            'penerangan' => 'nullable|string',
-        ]);
-
-        // Set agensi_id from authenticated user
-        $validated['ID_Agensi'] = $user->ID_Agensi;
-        $validated['status_persetujuan'] = null; // Default to pending approval
-
-        RegisterRisk::create($validated);
-
-        return redirect()->route('entiti.pengurusan_risiko.index')
-                       ->with('success', 'Risiko berjaya didaftarkan');
     }
 
     /**

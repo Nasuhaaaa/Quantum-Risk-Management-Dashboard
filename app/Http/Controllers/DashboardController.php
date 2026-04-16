@@ -150,7 +150,10 @@ class DashboardController extends Controller
         $totalUsers = User::count();
         $latestUsers = User::with('jenisPengguna')->orderBy('created_at', 'desc')->take(5)->get();
 
-        return view('dashboard', compact(
+        // Get the entity name for the dashboard header
+        $entitiName = $user->agensi?->nama_agensi ?? 'Entiti Tidak Diketahui';
+
+        return view('dashboard.entiti', compact(
             'currentRole',
             'totalRisiko',
             'totalAset',
@@ -164,7 +167,8 @@ class DashboardController extends Controller
             'userCounts',
             'totalUsers',
             'latestUsers',
-            'sectors'
+            'sectors',
+            'entitiName' // Pass the entity name to the view
         ));
         } catch (\Exception $e) {
             \Log::error('DashboardController error', [

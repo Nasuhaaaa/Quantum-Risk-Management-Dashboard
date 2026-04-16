@@ -35,10 +35,52 @@
     <div class="card-box mb-4">
         <h5 class="mb-3">Maklumat CBOM</h5>
 
-        <div class="mb-3">
-            <label>Maklumat CBOM</label>
-            <select class="form-select"></select>
-        </div>
+        @if($cbom)
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th class="text-muted">Nama Aset</th>
+                            <td>{{ $cbom->sbom?->inventori?->nama_aset }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted">ID SBOM</th>
+                            <td>{{ $cbom->sbom?->id }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted">ID CBOM</th>
+                            <td>{{ $cbom->id }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted">Algoritma Kriptografi</th>
+                            <td>{{ $cbom->algoritma_kriptografi }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted">Panjang Kunci</th>
+                            <td>{{ $cbom->panjang_kunci }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted">Tujuan Penggunaan</th>
+                            <td>{{ $cbom->tujuan_penggunaan }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted">Library/Modules</th>
+                            <td>{{ $cbom->library_modules }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted">Kategori Data</th>
+                            <td>{{ $cbom->kategori_data }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-muted">Sokongan Crypto Agility</th>
+                            <td>{{ $cbom->sokongan_crypto_agility }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <p class="text-muted">Tiada maklumat CBOM yang tersedia.</p>
+        @endif
     </div>
 
     <!-- Maklumat Risiko Section -->

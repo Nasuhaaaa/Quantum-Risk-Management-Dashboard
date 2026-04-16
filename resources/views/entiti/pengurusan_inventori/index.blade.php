@@ -28,43 +28,48 @@
     <h5>Senarai Inventori</h5>
 
     <div class="table-responsive">
-        <table class="table table-striped">
+        <table class="table table-striped table-hover">
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Nama Aset</th>
                     <th>Jenis Aset</th>
-                    <th>Lokasi</th>
+                    <th>Nama Aset</th>
+                    <th>Lokasi Pemilik</th>
+                    <th>Sistem Legasi</th>
+                    <th>Catatan</th>
                     <th>Tarikh Ditambah</th>
-                    <th>Tindakan</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($inventori as $item)
-                    <tr>
+                    <tr class="clickable-row" data-href="{{ route('entiti.pengurusan_inventori.show', $item->id) }}" style="cursor: pointer; background-color: #f9f9f9;" onmouseover="this.style.backgroundColor='#e9ecef';" onmouseout="this.style.backgroundColor='#f9f9f9';">
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $item->nama_aset ?? '-' }}</td>
                         <td>{{ $item->jenis_aset ?? '-' }}</td>
-                        <td>{{ $item->lokasi ?? '-' }}</td>
+                        <td>{{ $item->nama_aset ?? '-' }}</td>
+                        <td>{{ $item->lokasi_pemilik ?? '-' }}</td>
+                        <td>{{ $item->sistem_legasi ?? '-' }}</td>
+                        <td>{{ $item->catatan ?? '-' }}</td>
                         <td>{{ $item->created_at?->format('d/m/Y') ?? '-' }}</td>
-                        <td>
-                            <a href="{{ route('entiti.pengurusan_inventori.show', $item->id) }}" class="btn btn-sm btn-primary">Lihat</a>
-                            <a href="{{ route('entiti.pengurusan_inventori.edit', $item->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                            <form method="POST" action="{{ route('entiti.pengurusan_inventori.destroy', $item->id) }}" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Adakah anda pasti?')">Hapus</button>
-                            </form>
-                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center text-muted">Tiada data dijumpai</td>
+                        <td colspan="7" class="text-center text-muted">Tiada data dijumpai</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('.clickable-row');
+        rows.forEach(row => {
+            row.addEventListener('click', function() {
+                window.location.href = this.dataset.href;
+            });
+        });
+    });
+</script>
 
 @endsection
