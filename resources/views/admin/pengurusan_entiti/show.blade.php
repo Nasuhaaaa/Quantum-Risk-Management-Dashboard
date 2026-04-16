@@ -30,36 +30,26 @@
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Nama PIC</label>
-            <p class="mb-0">{{ $entity->pic_nama ?? '-' }}</p>
+            <p class="mb-0">{{ $entity->nama_pic ?? '-' }}</p>
         </div>
         <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Email PIC</label>
-            <p class="mb-0">{{ $entity->pic_email ?? '-' }}</p>
+            <p class="mb-0">{{ $entity->emel_pic ?? '-' }}</p>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Telefon PIC</label>
-            <p class="mb-0">{{ $entity->pic_telefon ?? '-' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label text-muted">Status</label>
-            <p class="mb-0">
-                @if($entity->status === 'aktif')
-                    <span class="badge bg-success">Aktif</span>
-                @else
-                    <span class="badge bg-secondary">Tidak Aktif</span>
-                @endif
-            </p>
+            <p class="mb-0">{{ $entity->no_tel_pic ?? '-' }}</p>
         </div>
     </div>
 
-    @if($entity->keterangan)
+    @if($entity->jenis_perniagaan_perhubungan)
     <div class="row">
         <div class="col-md-12 mb-3">
-            <label class="form-label text-muted">Keterangan</label>
-            <p class="mb-0">{{ $entity->keterangan }}</p>
+            <label class="form-label text-muted">Jenis Perniagaan / Perhubungan</label>
+            <p class="mb-0">{{ $entity->jenis_perniagaan_perhubungan }}</p>
         </div>
     </div>
     @endif

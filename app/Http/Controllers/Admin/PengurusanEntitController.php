@@ -42,14 +42,14 @@ class PengurusanEntitController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_agensi' => 'required|string|max:255|unique:agensi',
-            'no_tel_agensi' => 'required|string|max:20',
+            'nama_agensi' => 'required|string|max:150|unique:agensi,nama_agensi',
+            'no_tel_agensi' => 'nullable|string|max:50',
             'website' => 'nullable|url',
-            'pic_nama' => 'required|string|max:255',
-            'pic_telefon' => 'required|string|max:20',
-            'pic_email' => 'required|email',
-            'id_sektor' => 'required|exists:sektor,id',
-            'keterangan' => 'nullable|string',
+            'nama_pic' => 'nullable|string|max:150',
+            'no_tel_pic' => 'nullable|string|max:50',
+            'emel_pic' => 'nullable|email|max:255',
+            'sektor_id' => 'nullable|exists:sektor,id',
+            'jenis_perniagaan_perhubungan' => 'nullable|string|max:255',
         ]);
 
         Agensi::create($validated);
@@ -87,14 +87,14 @@ class PengurusanEntitController extends Controller
         $entity = Agensi::findOrFail($id);
 
         $validated = $request->validate([
-            'nama_agensi' => 'required|string|max:255|unique:agensi,nama_agensi,' . $id,
-            'no_tel_agensi' => 'required|string|max:20',
+            'nama_agensi' => 'required|string|max:150|unique:agensi,nama_agensi,' . $id,
+            'no_tel_agensi' => 'nullable|string|max:50',
             'website' => 'nullable|url',
-            'pic_nama' => 'required|string|max:255',
-            'pic_telefon' => 'required|string|max:20',
-            'pic_email' => 'required|email',
-            'id_sektor' => 'required|exists:sektor,id',
-            'keterangan' => 'nullable|string',
+            'nama_pic' => 'nullable|string|max:150',
+            'no_tel_pic' => 'nullable|string|max:50',
+            'emel_pic' => 'nullable|email|max:255',
+            'sektor_id' => 'nullable|exists:sektor,id',
+            'jenis_perniagaan_perhubungan' => 'nullable|string|max:255',
         ]);
 
         $entity->update($validated);

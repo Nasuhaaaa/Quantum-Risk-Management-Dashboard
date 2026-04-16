@@ -19,4 +19,9 @@ class Sektor extends Model
     {
         return $this->hasMany(Agensi::class, 'sektor_id');
     }
+
+    public function agensis()
+    {
+        return $this->agensi();
+    }
 }

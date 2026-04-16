@@ -39,7 +39,7 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($sektor as $item)
+                @forelse($sectors as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->nama_sektor ?? '-' }}</td>
