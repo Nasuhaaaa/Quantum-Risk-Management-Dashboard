@@ -16,7 +16,7 @@ class PengurusanInventoriController extends Controller
     {
         // Fetch inventory data for the user's agency
         $user = auth()->user();
-        $inventori = Inventori::where('agensi_id', $user->ID_Agensi)->get();
+        $inventori = Inventori::where('agensi_id', $user->agensi_id)->get();
 
         // Pass data to the view
         return view('entiti.pengurusan_inventori.index', compact('inventori'));

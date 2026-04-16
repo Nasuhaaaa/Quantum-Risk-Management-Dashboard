@@ -32,8 +32,9 @@ Dashboard View
 
 Table in Database
 1. Pengguna
-    - User_ID (PK)
-    - Kata_Laluan
+    - id (PK)
+    - password
+    - remember_token
     - Jenis_Pengguna (FK kepada table Jenis Pengguna)
     - ID_Agensi (FK kepada table Agensi)
 2. Agensi

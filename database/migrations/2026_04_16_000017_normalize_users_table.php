@@ -58,7 +58,7 @@ return new class extends Migration
             $password = $row['password'] ?? $row['Kata_Laluan'] ?? bcrypt('password');
             $rememberToken = $row['remember_token'] ?? null;
             $jenisPenggunaId = $row['jenis_pengguna_id'] ?? $row['Jenis_Pengguna'] ?? null;
-            $agensiId = $row['agensi_id'] ?? $row['id_agensi'] ?? $row['ID_Agensi'] ?? null;
+            $agensiId = $row['agensi_id'] ?? $row['id_agensi'] ?? null;
             $createdAt = $row['created_at'] ?? now();
             $updatedAt = $row['updated_at'] ?? now();
 

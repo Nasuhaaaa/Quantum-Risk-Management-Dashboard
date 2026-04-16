@@ -44,7 +44,7 @@ class DashboardController extends Controller
 
         if ($currentRole === 'entiti') {
             // Entiti hanya lihat risiko agensi mereka sendiri
-            $riskQuery->where('pemilik_risiko', $user->agensi?->nama_agensi ?? $user->ID_Agensi);
+            $riskQuery->where('pemilik_risiko', $user->agensi?->nama_agensi ?? $user->agensi_id);
         } elseif ($currentRole === 'ketua_sektor') {
             // Ketua Sektor lihat risiko dari semua agensi dalam sektor mereka
             $userSektor = $user->agensi?->sektor;

@@ -169,28 +169,28 @@ class TestDataSeeder extends Seeder
         // 1. Entiti User (from entity 1)
         User::create([
             'Jenis_Pengguna' => $jenisPenggunaEntiti,
-            'ID_Agensi' => $entity1->id,
+            'agensi_id' => $entity1->id,
             'Kata_Laluan' => bcrypt('Test@123456'),
         ]);
 
         // 2. Ketua Sektor User (for sector 1)
         User::create([
             'Jenis_Pengguna' => $jenisPenggunaSektor,
-            'ID_Agensi' => null,
+            'agensi_id' => null,
             'Kata_Laluan' => bcrypt('Test@123456'),
         ]);
 
         // 3. Pengurusan User (Risk Management)
         User::create([
             'Jenis_Pengguna' => $jenisPengguna,
-            'ID_Agensi' => null,
+            'agensi_id' => null,
             'Kata_Laluan' => bcrypt('Test@123456'),
         ]);
 
         // 4. Admin User
         User::create([
             'Jenis_Pengguna' => $jenisPenggunaAdmin,
-            'ID_Agensi' => null,
+            'agensi_id' => null,
             'Kata_Laluan' => bcrypt('Test@123456'),
         ]);
 

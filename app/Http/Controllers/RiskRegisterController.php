@@ -63,7 +63,7 @@ class RiskRegisterController extends Controller
         ]);
 
         // Set agensi_id from authenticated user
-        $validated['ID_Agensi'] = $user->ID_Agensi;
+        $validated['agensi_id'] = $user->agensi_id;
         $validated['status_persetujuan'] = null; // Default to pending approval
 
         RegisterRisk::create($validated);
