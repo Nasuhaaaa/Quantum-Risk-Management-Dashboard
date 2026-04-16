@@ -23,14 +23,14 @@
 
         <!-- ENTITI MENU -->
         @if(auth()->user()->role_type === 'entiti')
-            <div class="sidebar-section">Pengurusan Risiko</div>
-            <a href="{{ route('entiti.pengurusan_risiko.create') }}">Daftar Risiko</a>
-            <a href="{{ route('entiti.pengurusan_risiko.index') }}">Senarai Daftar Risiko</a>
-            <a href="{{ route('entiti.pengurusan_risiko.laporan_penilaian') }}">Laporan Penilaian Risiko</a>
-
             <div class="sidebar-section">Pengurusan Inventori</div>
             <a href="{{ route('entiti.pengurusan_inventori.create') }}">Daftar Inventori</a>
             <a href="{{ route('entiti.pengurusan_inventori.index') }}">Senarai Inventori</a>
+
+            <div class="sidebar-section">Pengurusan Risiko</div>
+            <a href="{{ route('entiti.pengurusan_inventori.index') }}">Daftar Risiko</a>
+            <a href="{{ route('entiti.pengurusan_risiko.index') }}">Senarai Daftar Risiko</a>
+            <a href="{{ route('entiti.pengurusan_risiko.laporan_penilaian') }}">Laporan Penilaian Risiko</a>
 
             <div class="sidebar-section">Lain-lain</div>
             <a href="{{ route('entiti.pengurusan_data.index') }}">Pengurusan Data</a>
