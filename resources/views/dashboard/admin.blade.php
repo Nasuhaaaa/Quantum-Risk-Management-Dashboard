@@ -1,12 +1,7 @@
-@extends('layouts.app-layout')
-
-@section('title', 'Papan Pemuka - Admin')
-
-@section('content')
     <div class="dashboard-header d-flex align-items-center justify-content-between">
         <div>
             <h2>Papan Pemuka Sistem Admin</h2>
-            <p>Selamat datang, {{ auth()->user()->name }}. Anda mempunyai akses penuh ke sistem.</p>
+            <p>Selamat datang, {{ $displayName }}. Anda mempunyai akses penuh ke sistem.</p>
         </div>
         <div>
             <span class="badge dashboard-badge bg-primary">Admin</span>
@@ -37,9 +32,9 @@
         </div>
         <div class="col-lg-3">
             <div class="card-box">
-                <h6>Peranan Pengguna</h6>
-                <p class="fs-2 fw-bold">{{ $userCounts->count() }}</p>
-                <p class="text-muted mb-0">Jenis peranan di sistem.</p>
+                <h6>Risiko Tinggi</h6>
+                <p class="fs-2 fw-bold">{{ number_format($jumlahRisikoTinggi) }}</p>
+                <p class="text-muted mb-0">Entri yang memerlukan perhatian segera.</p>
             </div>
         </div>
     </div>
@@ -108,8 +103,7 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Nama</th>
-                            <th>Emel</th>
+                            <th>Nama Pengguna</th>
                             <th>Peranan</th>
                             <th>Tarikh Daftar</th>
                         </tr>
@@ -117,8 +111,7 @@
                     <tbody>
                         @foreach($latestUsers as $user)
                             <tr>
-                                <td>{{ $user->name }}</td>
-                                <td>{{ $user->email }}</td>
+                                <td>{{ $user->username }}</td>
                                 <td>{{ $user->jenisPengguna?->jenis_pengguna ?? 'Tidak Diketahui' }}</td>
                                 <td>{{ $user->created_at->format('d/m/Y') }}</td>
                             </tr>
@@ -182,4 +175,3 @@
             });
         }
     </script>
-@endsection

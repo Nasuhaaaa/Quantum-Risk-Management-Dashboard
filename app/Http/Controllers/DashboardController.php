@@ -20,7 +20,7 @@ class DashboardController extends Controller
 
             $jenisPengguna = $user->jenisPengguna?->jenis_pengguna;
             $currentRole = $user->role_type ?? $jenisPengguna ?? 'Unknown';
-            $userAgensiId = $user->agensi_id;
+            $displayName = $user?->username ?? 'Pengguna';
 
             \Log::info('User role', ['role' => $currentRole, 'jenis_pengguna' => $jenisPengguna]);
 
@@ -57,6 +57,9 @@ class DashboardController extends Controller
 
         $totalRisiko = (clone $riskQuery)->count();
         $totalAset = (clone $riskQuery)->select('pemilik_risiko')->distinct()->count();
+        $jumlahRisikoTinggi = (clone $riskQuery)->where('tahap_risiko', 'Tinggi')->count();
+        $jumlahRisikoSederhana = (clone $riskQuery)->where('tahap_risiko', 'Sederhana')->count();
+        $jumlahRisikoRendah = (clone $riskQuery)->where('tahap_risiko', 'Rendah')->count();
 
         $riskLevels = (clone $riskQuery)
             ->select('tahap_risiko', DB::raw('count(*) as total'))
@@ -152,11 +155,16 @@ class DashboardController extends Controller
 
         // Get the entity name for the dashboard header
         $entitiName = $user->agensi?->nama_agensi ?? 'Entiti Tidak Diketahui';
+        $userSectorName = $user->agensi?->sektor?->nama_sektor ?? 'Sektor Tidak Diketahui';
 
-        return view('dashboard.entiti', compact(
+        return view('dashboard', compact(
             'currentRole',
+            'displayName',
             'totalRisiko',
             'totalAset',
+            'jumlahRisikoTinggi',
+            'jumlahRisikoSederhana',
+            'jumlahRisikoRendah',
             'riskLevels',
             'topRisks',
             'topAttention',
@@ -168,7 +176,8 @@ class DashboardController extends Controller
             'totalUsers',
             'latestUsers',
             'sectors',
-            'entitiName' // Pass the entity name to the view
+            'entitiName',
+            'userSectorName'
         ));
         } catch (\Exception $e) {
             \Log::error('DashboardController error', [

@@ -1,15 +1,41 @@
-@extends('layouts.app-layout')
-
-@section('title', 'Papan Pemuka - Ketua Sektor')
-
-@section('content')
     <div class="dashboard-header d-flex align-items-center justify-content-between">
         <div>
             <h2>Papan Pemuka Ketua Sektor</h2>
-            <p>Selamat datang, {{ auth()->user()->name }}. Pantau risiko dalam sektor anda.</p>
+            <p>Selamat datang, {{ $displayName }}. Pantau risiko dalam {{ $userSectorName }}.</p>
         </div>
         <div>
             <span class="badge dashboard-badge bg-success">Ketua Sektor</span>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-3">
+        <div class="col-lg-3">
+            <div class="card-box">
+                <h6>Jumlah Risiko</h6>
+                <p class="fs-2 fw-bold">{{ number_format($totalRisiko) }}</p>
+                <p class="text-muted mb-0">Semua risiko dalam sektor anda.</p>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card-box">
+                <h6>Entiti Dipantau</h6>
+                <p class="fs-2 fw-bold">{{ number_format($entitiRisiko->pluck('pemilik_risiko')->unique()->count()) }}</p>
+                <p class="text-muted mb-0">Entiti yang mempunyai penilaian risiko.</p>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card-box">
+                <h6>Risiko Tinggi</h6>
+                <p class="fs-2 fw-bold">{{ number_format($jumlahRisikoTinggi) }}</p>
+                <p class="text-muted mb-0">Entri kritikal dalam sektor.</p>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card-box">
+                <h6>Risiko Rendah</h6>
+                <p class="fs-2 fw-bold">{{ number_format($jumlahRisikoRendah) }}</p>
+                <p class="text-muted mb-0">Entri yang terkawal.</p>
+            </div>
         </div>
     </div>
 
@@ -125,4 +151,3 @@
             });
         }
     </script>
-@endsection
