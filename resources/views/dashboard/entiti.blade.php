@@ -1,12 +1,7 @@
-@extends('layouts.app-layout')
-
-@section('title', 'Papan Pemuka - Entiti')
-
-@section('content')
     <div class="dashboard-header d-flex align-items-center justify-content-between">
         <div>
             <h2>Papan Pemuka Entiti ({{ $entitiName }})</h2>
-            <p>Selamat datang, {{ auth()->user()->name }}. Uruskan dan pantau risiko dalam agensi anda.</p>
+            <p>Selamat datang, {{ $displayName }}. Uruskan dan pantau risiko dalam agensi anda.</p>
         </div>
         <div>
             <span class="badge dashboard-badge bg-info">Entiti</span>
@@ -38,8 +33,8 @@
         <div class="col-lg-3">
             <div class="card-box stat-card">
                 <h6>Tahap Risiko</h6>
-                <p class="fs-2 fw-bold">{{ $riskLevels->count() }}</p>
-                <p class="text-muted mb-0">Bilangan kategori tahap risiko.</p>
+                <p class="fs-2 fw-bold">{{ number_format($jumlahRisikoTinggi) }}</p>
+                <p class="text-muted mb-0">Bilangan entri pada tahap tinggi.</p>
             </div>
         </div>
     </div>
@@ -206,4 +201,3 @@
             });
         }
     </script>
-@endsection
