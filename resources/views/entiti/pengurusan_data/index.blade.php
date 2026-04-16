@@ -11,10 +11,10 @@
         <p>Import dan Export Data Risiko</p>
     </div>
     <div>
-        <a href="{{ route('entiti.pengurusan_data.exportForm') }}" class="btn btn-sm btn-secondary mr-2">
+        <a href="{{ route('entiti.pengurusan_data.export_form') }}" class="btn btn-sm btn-secondary mr-2">
             <i class="fas fa-download"></i> Export
         </a>
-        <a href="{{ route('entiti.pengurusan_data.importForm') }}" class="btn btn-sm btn-orange">
+        <a href="{{ route('entiti.pengurusan_data.import_form') }}" class="btn btn-sm btn-orange">
             <i class="fas fa-upload"></i> Import
         </a>
     </div>

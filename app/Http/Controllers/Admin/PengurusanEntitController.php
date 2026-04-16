@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Agensi;
 use App\Models\Sektor;
+use App\Support\AuditLogger;
 use Illuminate\Http\Request;
 
 class PengurusanEntitController extends Controller
@@ -52,7 +53,15 @@ class PengurusanEntitController extends Controller
             'jenis_perniagaan_perhubungan' => 'nullable|string|max:255',
         ]);
 
-        Agensi::create($validated);
+        $entity = Agensi::create($validated);
+
+        AuditLogger::log(
+            action: 'create',
+            module: 'Pengurusan Entiti',
+            description: 'Entiti baharu didaftarkan.',
+            model: $entity,
+            newValues: $validated
+        );
 
         return redirect()->route('admin.pengurusan_entiti.index')
                        ->with('success', 'Entiti berjaya didaftarkan');
@@ -97,7 +106,27 @@ class PengurusanEntitController extends Controller
             'jenis_perniagaan_perhubungan' => 'nullable|string|max:255',
         ]);
 
+        $oldValues = $entity->only([
+            'nama_agensi',
+            'no_tel_agensi',
+            'website',
+            'nama_pic',
+            'no_tel_pic',
+            'emel_pic',
+            'sektor_id',
+            'jenis_perniagaan_perhubungan',
+        ]);
+
         $entity->update($validated);
+
+        AuditLogger::log(
+            action: 'update',
+            module: 'Pengurusan Entiti',
+            description: 'Maklumat entiti dikemas kini.',
+            model: $entity,
+            oldValues: $oldValues,
+            newValues: $validated
+        );
 
         return redirect()->route('admin.pengurusan_entiti.index')
                        ->with('success', 'Entiti berjaya dikemas kini');
@@ -116,7 +145,26 @@ class PengurusanEntitController extends Controller
                            ->with('error', 'Tidak boleh memadam entiti yang mempunyai pengguna terdaftar');
         }
 
+        $oldValues = $entity->only([
+            'nama_agensi',
+            'no_tel_agensi',
+            'website',
+            'nama_pic',
+            'no_tel_pic',
+            'emel_pic',
+            'sektor_id',
+            'jenis_perniagaan_perhubungan',
+        ]);
+
         $entity->delete();
+
+        AuditLogger::log(
+            action: 'delete',
+            module: 'Pengurusan Entiti',
+            description: 'Entiti dihapuskan.',
+            model: $entity,
+            oldValues: $oldValues
+        );
 
         return redirect()->route('admin.pengurusan_entiti.index')
                        ->with('success', 'Entiti berjaya dihapus');

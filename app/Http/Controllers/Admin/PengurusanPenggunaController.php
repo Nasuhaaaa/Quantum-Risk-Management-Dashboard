@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Agensi;
 use App\Models\JenisPengguna;
 use App\Models\User;
+use App\Support\AuditLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class PengurusanPenggunaController extends Controller
 {
@@ -68,7 +70,15 @@ class PengurusanPenggunaController extends Controller
             $validated['agensi_id'] = null;
         }
 
-        User::create($validated);
+        $user = User::create($validated);
+
+        AuditLogger::log(
+            action: 'create',
+            module: 'Pengurusan Pengguna',
+            description: 'Pengguna baharu didaftarkan.',
+            model: $user,
+            newValues: Arr::except($validated, ['password'])
+        );
 
         return redirect()->route('admin.pengurusan_pengguna.index')
                        ->with('success', 'Pengguna berjaya didaftarkan');
@@ -121,11 +131,26 @@ class PengurusanPenggunaController extends Controller
             $validated['agensi_id'] = null;
         }
 
+        $oldValues = Arr::except($user->only([
+            'username',
+            'jenis_pengguna_id',
+            'agensi_id',
+        ]), ['password']);
+
         if (!$request->filled('password')) {
             unset($validated['password']);
         }
 
         $user->update($validated);
+
+        AuditLogger::log(
+            action: 'update',
+            module: 'Pengurusan Pengguna',
+            description: 'Maklumat pengguna dikemas kini.',
+            model: $user,
+            oldValues: $oldValues,
+            newValues: Arr::except($validated, ['password'])
+        );
 
         return redirect()->route('admin.pengurusan_pengguna.index')
                        ->with('success', 'Pengguna berjaya dikemas kini');
@@ -143,7 +168,21 @@ class PengurusanPenggunaController extends Controller
         }
 
         $user = User::findOrFail($id);
+        $oldValues = $user->only([
+            'username',
+            'jenis_pengguna_id',
+            'agensi_id',
+        ]);
+
         $user->delete();
+
+        AuditLogger::log(
+            action: 'delete',
+            module: 'Pengurusan Pengguna',
+            description: 'Pengguna dihapuskan.',
+            model: $user,
+            oldValues: $oldValues
+        );
 
         return redirect()->route('admin.pengurusan_pengguna.index')
                        ->with('success', 'Pengguna berjaya dihapus');

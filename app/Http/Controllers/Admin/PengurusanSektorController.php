@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Sektor;
+use App\Support\AuditLogger;
 use Illuminate\Http\Request;
 
 class PengurusanSektorController extends Controller
@@ -50,7 +51,15 @@ class PengurusanSektorController extends Controller
             'maklumat_perhubungan_sektor' => 'nullable|string',
         ]);
 
-        Sektor::create($validated);
+        $sector = Sektor::create($validated);
+
+        AuditLogger::log(
+            action: 'create',
+            module: 'Pengurusan Sektor',
+            description: 'Sektor baharu didaftarkan.',
+            model: $sector,
+            newValues: $validated
+        );
 
         return redirect()->route('admin.pengurusan_sektor.index')
                        ->with('success', 'Sektor berjaya ditambah');
@@ -90,7 +99,23 @@ class PengurusanSektorController extends Controller
             'maklumat_perhubungan_sektor' => 'nullable|string',
         ]);
 
+        $oldValues = $sector->only([
+            'nama_sektor',
+            'ketua_sektor',
+            'keterangan_sektor',
+            'maklumat_perhubungan_sektor',
+        ]);
+
         $sector->update($validated);
+
+        AuditLogger::log(
+            action: 'update',
+            module: 'Pengurusan Sektor',
+            description: 'Maklumat sektor dikemas kini.',
+            model: $sector,
+            oldValues: $oldValues,
+            newValues: $validated
+        );
 
         return redirect()->route('admin.pengurusan_sektor.index')
                        ->with('success', 'Sektor berjaya dikemas kini');
@@ -109,7 +134,22 @@ class PengurusanSektorController extends Controller
                            ->with('error', 'Tidak boleh memadam sektor yang mempunyai agensi terdaftar');
         }
 
+        $oldValues = $sector->only([
+            'nama_sektor',
+            'ketua_sektor',
+            'keterangan_sektor',
+            'maklumat_perhubungan_sektor',
+        ]);
+
         $sector->delete();
+
+        AuditLogger::log(
+            action: 'delete',
+            module: 'Pengurusan Sektor',
+            description: 'Sektor dihapuskan.',
+            model: $sector,
+            oldValues: $oldValues
+        );
 
         return redirect()->route('admin.pengurusan_sektor.index')
                        ->with('success', 'Sektor berjaya dihapus');
