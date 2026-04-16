@@ -45,19 +45,12 @@ class PengurusanSektorController extends Controller
     {
         $validated = $request->validate([
             'nama_sektor' => 'required|string|max:255|unique:sektor',
-            'pengurus_sektor' => 'nullable|string|max:255',
-            'email' => 'nullable|email',
-            'no_telefon' => 'nullable|string|max:20',
-            'keterangan' => 'nullable|string',
+            'ketua_sektor' => 'nullable|string|max:255',
+            'keterangan_sektor' => 'nullable|string',
+            'maklumat_perhubungan_sektor' => 'nullable|string',
         ]);
 
-        // Map form fields to model fields
-        Sektor::create([
-            'nama_sektor' => $validated['nama_sektor'],
-            'ketua_sektor' => $validated['pengurus_sektor'] ?? null,
-            'keterangan_sektor' => $validated['keterangan'] ?? null,
-            'maklumat_perhubungan_sektor' => ($validated['email'] ?? '') . ' | ' . ($validated['no_telefon'] ?? ''),
-        ]);
+        Sektor::create($validated);
 
         return redirect()->route('admin.pengurusan_sektor.index')
                        ->with('success', 'Sektor berjaya ditambah');
@@ -92,19 +85,12 @@ class PengurusanSektorController extends Controller
 
         $validated = $request->validate([
             'nama_sektor' => 'required|string|max:255|unique:sektor,nama_sektor,' . $id,
-            'pengurus_sektor' => 'nullable|string|max:255',
-            'email' => 'nullable|email',
-            'no_telefon' => 'nullable|string|max:20',
-            'keterangan' => 'nullable|string',
+            'ketua_sektor' => 'nullable|string|max:255',
+            'keterangan_sektor' => 'nullable|string',
+            'maklumat_perhubungan_sektor' => 'nullable|string',
         ]);
 
-        // Map form fields to model fields
-        $sector->update([
-            'nama_sektor' => $validated['nama_sektor'],
-            'ketua_sektor' => $validated['pengurus_sektor'] ?? null,
-            'keterangan_sektor' => $validated['keterangan'] ?? null,
-            'maklumat_perhubungan_sektor' => ($validated['email'] ?? '') . ' | ' . ($validated['no_telefon'] ?? ''),
-        ]);
+        $sector->update($validated);
 
         return redirect()->route('admin.pengurusan_sektor.index')
                        ->with('success', 'Sektor berjaya dikemas kini');

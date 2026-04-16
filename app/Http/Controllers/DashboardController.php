@@ -16,11 +16,11 @@ class DashboardController extends Controller
             \Log::info('DashboardController::index called');
 
             $user = Auth::user();
-            \Log::info('User authenticated', ['user_id' => $user->User_ID ?? 'null']);
+            \Log::info('User authenticated', ['user_id' => $user?->id ?? 'null']);
 
             $jenisPengguna = $user->jenisPengguna?->jenis_pengguna;
             $currentRole = $user->role_type ?? $jenisPengguna ?? 'Unknown';
-            $userAgensiId = $user->ID_Agensi;
+            $userAgensiId = $user->agensi_id;
 
             \Log::info('User role', ['role' => $currentRole, 'jenis_pengguna' => $jenisPengguna]);
 

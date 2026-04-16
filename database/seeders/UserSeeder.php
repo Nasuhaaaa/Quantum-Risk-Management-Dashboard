@@ -18,37 +18,43 @@ class UserSeeder extends Seeder
 
         $entity1 = Agensi::where('nama_agensi', 'Bank Nasional Malaysia')->first();
 
-        // 1. Entiti User (from entity 1)
-        User::create([
-            'username' => 'entiti.user',
-            'Jenis_Pengguna' => $jenisPenggunaEntiti,
-            'ID_Agensi' => $entity1->id,
-            'Kata_Laluan' => 'Test@123456',
-        ]);
+        $users = [
+            [
+                'username' => 'entiti.user',
+                'jenis_pengguna_id' => $jenisPenggunaEntiti,
+                'agensi_id' => $entity1?->id,
+            ],
+            [
+                'username' => 'sektor.head',
+                'jenis_pengguna_id' => $jenisPenggunaSektor,
+                'agensi_id' => null,
+            ],
+            [
+                'username' => 'risk.manager',
+                'jenis_pengguna_id' => $jenisPengguna,
+                'agensi_id' => null,
+            ],
+            [
+                'username' => 'system.admin',
+                'jenis_pengguna_id' => $jenisPenggunaAdmin,
+                'agensi_id' => null,
+            ],
+        ];
 
-        // 2. Ketua Sektor User
-        User::create([
-            'username' => 'sektor.head',
-            'Jenis_Pengguna' => $jenisPenggunaSektor,
-            'ID_Agensi' => null,
-            'Kata_Laluan' => 'Test@123456',
-        ]);
+        foreach ($users as $user) {
+            if (!$user['jenis_pengguna_id']) {
+                continue;
+            }
 
-        // 3. Pengurusan User (Risk Management)
-        User::create([
-            'username' => 'risk.manager',
-            'Jenis_Pengguna' => $jenisPengguna,
-            'ID_Agensi' => null,
-            'Kata_Laluan' => 'Test@123456',
-        ]);
-
-        // 4. Admin User
-        User::create([
-            'username' => 'system.admin',
-            'Jenis_Pengguna' => $jenisPenggunaAdmin,
-            'ID_Agensi' => null,
-            'Kata_Laluan' => 'Test@123456',
-        ]);
+            User::updateOrCreate(
+                ['username' => $user['username']],
+                [
+                    'jenis_pengguna_id' => $user['jenis_pengguna_id'],
+                    'agensi_id' => $user['agensi_id'],
+                    'password' => 'Test@123456',
+                ]
+            );
+        }
 
         $this->command->info('User seeded successfully!');
     }

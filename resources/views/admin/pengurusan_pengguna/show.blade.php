@@ -4,73 +4,37 @@
 
 @section('content')
 
-<!-- Page Header -->
 <div class="dashboard-header">
     <div>
         <h2>Lihat Butiran Pengguna</h2>
-        <p>{{ $user->nama_lengkap }}</p>
+        <p>{{ $user->username }}</p>
     </div>
 </div>
 
-<a href="{{ route('admin.pengurusan_pengguna.index') }}" class="btn btn-sm btn-secondary mb-3">← Kembali</a>
+<a href="{{ route('admin.pengurusan_pengguna.index') }}" class="btn btn-sm btn-secondary mb-3">Kembali</a>
 
-<!-- User Details Card -->
 <div class="card-box">
     <div class="row">
         <div class="col-md-6 mb-3">
-            <label class="form-label text-muted">Nama Lengkap</label>
-            <p class="mb-0">{{ $user->nama_lengkap }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label text-muted">Email</label>
-            <p class="mb-0">{{ $user->email }}</p>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label text-muted">No. Telefon</label>
-            <p class="mb-0">{{ $user->no_telefon ?? '-' }}</p>
+            <label class="form-label text-muted">Nama Pengguna</label>
+            <p class="mb-0">{{ $user->username }}</p>
         </div>
         <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Jenis Pengguna</label>
             <p class="mb-0">
-                @if($user->jenis_pengguna === 'entiti')
-                    <span class="badge bg-primary">Entiti</span>
-                @elseif($user->jenis_pengguna === 'ketua_sektor')
-                    <span class="badge bg-success">Ketua Sektor</span>
-                @elseif($user->jenis_pengguna === 'pengurusan')
-                    <span class="badge bg-warning">Pengurusan</span>
-                @elseif($user->jenis_pengguna === 'admin')
-                    <span class="badge bg-danger">Admin</span>
-                @endif
+                <span class="badge bg-primary">{{ $user->jenisPengguna?->jenis_pengguna ?? '-' }}</span>
             </p>
         </div>
     </div>
 
-    @if($user->jenis_pengguna === 'entiti' && $user->id_agensi)
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Agensi</label>
             <p class="mb-0">{{ $user->agensi?->nama_agensi ?? '-' }}</p>
         </div>
-    </div>
-    @endif
-
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label text-muted">Status</label>
-            <p class="mb-0">
-                @if($user->is_active)
-                    <span class="badge bg-success">Aktif</span>
-                @else
-                    <span class="badge bg-secondary">Tidak Aktif</span>
-                @endif
-            </p>
-        </div>
         <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Tarikh Daftar</label>
-            <p class="mb-0">{{ $user->created_at?->format('d/m/Y H:i') }}</p>
+            <p class="mb-0">{{ $user->created_at?->format('d/m/Y H:i') ?? '-' }}</p>
         </div>
     </div>
 

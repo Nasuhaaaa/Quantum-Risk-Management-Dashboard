@@ -30,7 +30,7 @@ class Agensi extends Model
 
     public function users()
     {
-        return $this->hasMany(User::class, 'ID_Agensi', 'id');
+        return $this->hasMany(User::class, 'agensi_id', 'id');
     }
 
     public function inventori()

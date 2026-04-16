@@ -41,7 +41,7 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($agensi as $item)
+                @forelse($entities as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->nama_agensi ?? '-' }}</td>

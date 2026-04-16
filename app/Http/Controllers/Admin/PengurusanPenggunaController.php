@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Agensi;
+use App\Models\JenisPengguna;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PengurusanPenggunaController extends Controller
@@ -14,17 +15,18 @@ class PengurusanPenggunaController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::with('agensi');
+        $query = User::with(['agensi', 'jenisPengguna']);
 
-        // Search by name or email
+        // Search by username
         if ($request->filled('search')) {
-            $query->where('nama_lengkap', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
+            $query->where('username', 'like', '%' . $request->search . '%');
         }
 
         // Filter by user type (jenis pengguna)
         if ($request->filled('jenis_pengguna')) {
-            $query->where('jenis_pengguna', $request->jenis_pengguna);
+            $query->whereHas('jenisPengguna', function ($roleQuery) use ($request) {
+                $roleQuery->where('jenis_pengguna', $request->jenis_pengguna);
+            });
         }
 
         $users = $query->paginate(15);
@@ -38,8 +40,9 @@ class PengurusanPenggunaController extends Controller
     public function create()
     {
         $agensis = Agensi::all();
+        $jenisPenggunas = JenisPengguna::orderBy('role_id')->get();
 
-        return view('admin.pengurusan_pengguna.create', compact('agensis'));
+        return view('admin.pengurusan_pengguna.create', compact('agensis', 'jenisPenggunas'));
     }
 
     /**
@@ -48,16 +51,22 @@ class PengurusanPenggunaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_lengkap' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'no_telefon' => 'nullable|string|max:20',
-            'jenis_pengguna' => 'required|in:entiti,ketua_sektor,pengurusan,admin',
-            'id_agensi' => 'nullable|exists:agensi,id',
+            'username' => 'required|string|max:255|unique:users,username',
+            'jenis_pengguna_id' => 'required|exists:jenis_pengguna,role_id',
+            'agensi_id' => 'nullable|exists:agensi,id',
             'password' => 'required|string|min:8|confirmed',
-            'is_active' => 'required|boolean',
         ]);
 
-        $validated['password'] = bcrypt($validated['password']);
+        $jenisPengguna = JenisPengguna::find($validated['jenis_pengguna_id']);
+        if ($jenisPengguna?->jenis_pengguna === 'Entiti (Agensi)' && empty($validated['agensi_id'])) {
+            return back()
+                ->withErrors(['agensi_id' => 'Agensi wajib dipilih untuk pengguna Entiti.'])
+                ->withInput();
+        }
+
+        if ($jenisPengguna?->jenis_pengguna !== 'Entiti (Agensi)') {
+            $validated['agensi_id'] = null;
+        }
 
         User::create($validated);
 
@@ -70,7 +79,7 @@ class PengurusanPenggunaController extends Controller
      */
     public function show($id)
     {
-        $user = User::with('agensi')->findOrFail($id);
+        $user = User::with(['agensi', 'jenisPengguna'])->findOrFail($id);
 
         return view('admin.pengurusan_pengguna.show', compact('user'));
     }
@@ -82,8 +91,9 @@ class PengurusanPenggunaController extends Controller
     {
         $user = User::findOrFail($id);
         $agensis = Agensi::all();
+        $jenisPenggunas = JenisPengguna::orderBy('role_id')->get();
 
-        return view('admin.pengurusan_pengguna.edit', compact('user', 'agensis'));
+        return view('admin.pengurusan_pengguna.edit', compact('user', 'agensis', 'jenisPenggunas'));
     }
 
     /**
@@ -94,19 +104,24 @@ class PengurusanPenggunaController extends Controller
         $user = User::findOrFail($id);
 
         $validated = $request->validate([
-            'nama_lengkap' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-            'no_telefon' => 'nullable|string|max:20',
-            'jenis_pengguna' => 'required|in:entiti,ketua_sektor,pengurusan,admin',
-            'id_agensi' => 'nullable|exists:agensi,id',
+            'username' => 'required|string|max:255|unique:users,username,' . $id,
+            'jenis_pengguna_id' => 'required|exists:jenis_pengguna,role_id',
+            'agensi_id' => 'nullable|exists:agensi,id',
             'password' => 'nullable|string|min:8|confirmed',
-            'is_active' => 'required|boolean',
         ]);
 
-        // Only hash password if provided
-        if ($request->filled('password')) {
-            $validated['password'] = bcrypt($validated['password']);
-        } else {
+        $jenisPengguna = JenisPengguna::find($validated['jenis_pengguna_id']);
+        if ($jenisPengguna?->jenis_pengguna === 'Entiti (Agensi)' && empty($validated['agensi_id'])) {
+            return back()
+                ->withErrors(['agensi_id' => 'Agensi wajib dipilih untuk pengguna Entiti.'])
+                ->withInput();
+        }
+
+        if ($jenisPengguna?->jenis_pengguna !== 'Entiti (Agensi)') {
+            $validated['agensi_id'] = null;
+        }
+
+        if (!$request->filled('password')) {
             unset($validated['password']);
         }
 

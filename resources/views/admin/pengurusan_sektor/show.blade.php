@@ -22,44 +22,30 @@
             <p class="mb-0">{{ $sector->nama_sektor }}</p>
         </div>
         <div class="col-md-6 mb-3">
-            <label class="form-label text-muted">Pengurus Sektor</label>
-            <p class="mb-0">{{ $sector->pengurus_sektor ?? '-' }}</p>
+            <label class="form-label text-muted">Ketua Sektor</label>
+            <p class="mb-0">{{ $sector->ketua_sektor ?? '-' }}</p>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label text-muted">Email Pengurus</label>
-            <p class="mb-0">{{ $sector->email ?? '-' }}</p>
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label text-muted">No. Telefon</label>
-            <p class="mb-0">{{ $sector->no_telefon ?? '-' }}</p>
+        <div class="col-md-12 mb-3">
+            <label class="form-label text-muted">Maklumat Perhubungan Sektor</label>
+            <p class="mb-0">{{ $sector->maklumat_perhubungan_sektor ?? '-' }}</p>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label text-muted">Status</label>
-            <p class="mb-0">
-                @if($sector->status === 'aktif')
-                    <span class="badge bg-success">Aktif</span>
-                @else
-                    <span class="badge bg-secondary">Tidak Aktif</span>
-                @endif
-            </p>
-        </div>
         <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Tarikh Daftar</label>
             <p class="mb-0">{{ $sector->created_at?->format('d/m/Y H:i') }}</p>
         </div>
     </div>
 
-    @if($sector->keterangan)
+    @if($sector->keterangan_sektor)
     <div class="row">
         <div class="col-md-12 mb-3">
-            <label class="form-label text-muted">Keterangan</label>
-            <p class="mb-0">{{ $sector->keterangan }}</p>
+            <label class="form-label text-muted">Keterangan Sektor</label>
+            <p class="mb-0">{{ $sector->keterangan_sektor }}</p>
         </div>
     </div>
     @endif
@@ -94,15 +80,9 @@
                 @foreach($sector->agensis as $agensi)
                 <tr>
                     <td>{{ $agensi->nama_agensi }}</td>
-                    <td>{{ $agensi->pic_nama ?? '-' }}</td>
-                    <td>{{ $agensi->pic_email ?? '-' }}</td>
-                    <td>
-                        @if($agensi->status === 'aktif')
-                            <span class="badge bg-success">Aktif</span>
-                        @else
-                            <span class="badge bg-secondary">Tidak Aktif</span>
-                        @endif
-                    </td>
+                    <td>{{ $agensi->nama_pic ?? '-' }}</td>
+                    <td>{{ $agensi->emel_pic ?? '-' }}</td>
+                    <td>-</td>
                 </tr>
                 @endforeach
             </tbody>

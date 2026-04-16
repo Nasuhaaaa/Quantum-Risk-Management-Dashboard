@@ -4,7 +4,6 @@
 
 @section('content')
 
-<!-- Page Header -->
 <div class="dashboard-header">
     <div>
         <h2>Pengurusan Pengguna</h2>
@@ -15,7 +14,6 @@
     </div>
 </div>
 
-<!-- Alerts -->
 @if ($message = Session::get('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         <strong>Berjaya!</strong> {{ $message }}
@@ -23,7 +21,6 @@
     </div>
 @endif
 
-<!-- Table Card -->
 <div class="card-box">
     <h5>Senarai Pengguna</h5>
 
@@ -32,8 +29,7 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Nama</th>
-                    <th>Email</th>
+                    <th>Nama Pengguna</th>
                     <th>Jenis Pengguna</th>
                     <th>Agensi</th>
                     <th>Tarikh Dibuat</th>
@@ -44,10 +40,9 @@
                 @forelse($users as $user)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $user->name ?? '-' }}</td>
-                        <td>{{ $user->email ?? '-' }}</td>
+                        <td>{{ $user->username }}</td>
                         <td>
-                            <span class="badge bg-primary">{{ $user->role_type ?? '-' }}</span>
+                            <span class="badge bg-primary">{{ $user->jenisPengguna?->jenis_pengguna ?? '-' }}</span>
                         </td>
                         <td>{{ $user->agensi?->nama_agensi ?? '-' }}</td>
                         <td>{{ $user->created_at?->format('d/m/Y') ?? '-' }}</td>
@@ -63,7 +58,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted">Tiada data dijumpai</td>
+                        <td colspan="6" class="text-center text-muted">Tiada data dijumpai</td>
                     </tr>
                 @endforelse
             </tbody>

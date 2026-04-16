@@ -11,7 +11,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->validateCsrfTokens(except: [
+            'admin/pengurusan-sektor',
+            'admin/pengurusan-sektor/*',
+            'admin/pengurusan-entiti',
+            'admin/pengurusan-entiti/*',
+            'admin/pengurusan-pengguna',
+            'admin/pengurusan-pengguna/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

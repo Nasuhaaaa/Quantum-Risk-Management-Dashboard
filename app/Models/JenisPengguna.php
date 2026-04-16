@@ -16,6 +16,6 @@ class JenisPengguna extends Model
 
     public function users()
     {
-        return $this->hasMany(User::class, 'Jenis_Pengguna', 'role_id');
+        return $this->hasMany(User::class, 'jenis_pengguna_id', 'role_id');
     }
 }
