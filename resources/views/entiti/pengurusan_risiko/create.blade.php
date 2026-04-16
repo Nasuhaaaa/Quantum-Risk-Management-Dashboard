@@ -30,7 +30,7 @@
     </div>
 </div>
 
-<form method="POST" action="{{ route('entiti.pengurusan_risiko.store') }}">
+<form method="POST" action="{{ route('entiti.pengurusan_inventori.sbom.store', ['inventori_id' => $inventori_id]) }}">
     @csrf
 
     <!-- Maklumat CBOM Section -->

@@ -92,9 +92,18 @@ Route::middleware('auth')->group(function () {
             Route::get('{id}/edit', [EntitInventoriController::class, 'edit'])->name('edit');
             Route::put('{id}', [EntitInventoriController::class, 'update'])->name('update');
             Route::delete('{id}', [EntitInventoriController::class, 'destroy'])->name('destroy');
+        });
 
-            // Add the detail_cbom route here
-            Route::get('sbom/{sbom_id}', [SBOMController::class, 'show'])->name('detail_cbom');
+        // SBOM Routes - Separated from pengurusan_inventori to avoid route conflicts
+        Route::prefix('pengurusan-inventori/sbom')->name('pengurusan_inventori.sbom.')->group(function () {
+            // ✅ ALWAYS put static routes first
+            Route::get('create/{inventori_id}', [SBOMController::class, 'create'])->name('create');
+
+            // POST route BEFORE dynamic GET route
+            Route::post('{inventori_id}', [SBOMController::class, 'store'])->name('store');
+
+            // dynamic LAST
+            Route::get('{sbom_id}', [SBOMController::class, 'show'])->name('show');
         });
 
         // Pengurusan Data
@@ -185,9 +194,5 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-// SBOM Routes
-Route::prefix('sbom')->name('sbom.')->group(function () {
-    Route::get('{sbom_id}', [SBOMController::class, 'show'])->name('show');
-});
 
 

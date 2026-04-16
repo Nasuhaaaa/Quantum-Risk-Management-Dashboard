@@ -12,7 +12,6 @@
     </div>
 </div>
 
-<a href="{{ route('entiti.pengurusan_inventori.index') }}" class="btn btn-sm btn-secondary mb-3">← Kembali</a>
 
 <!-- Inventory Details Section -->
 <div class="card-box p-4 mb-4">
@@ -67,15 +66,22 @@
             @method('DELETE')
             <button type="submit" class="btn btn-danger">Padam</button>
         </form>
-        <a href="{{ route('entiti.pengurusan_inventori.index') }}" class="btn btn-grey">Tutup</a>
+        <a href="{{ route('entiti.pengurusan_inventori.index') }}" class="btn btn-grey">Kembali</a>
     </div>
 </div>
 
 <!-- SBOM List Section -->
 <div class="card-box p-4">
-    <h5 class="fw-bold mb-3">Senarai SBOM</h5>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold">Senarai SBOM</h5>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="{{ route('entiti.pengurusan_inventori.sbom.create', ['inventori_id' => $inventory->id]) }}" class="btn btn-orange w-100" >Tambah SBOM</a>
+        </div>
+    </div>
 
     @if($sboms->isEmpty())
+
         <p class="text-muted">Tiada SBOM yang berkaitan dengan inventori ini.</p>
     @else
         <div class="table-responsive">
@@ -97,7 +103,7 @@
                 </thead>
                 <tbody>
                     @foreach($sboms as $index => $sbom)
-                        <tr class="clickable-row" data-href="{{ route('entiti.pengurusan_inventori.detail_cbom', ['sbom_id' => $sbom->id]) }}" style="cursor: pointer; background-color: #f9f9f9;" onmouseover="this.style.backgroundColor='#e9ecef';" onmouseout="this.style.backgroundColor='#f9f9f9';">
+                        <tr class="clickable-row" data-href="{{ route('entiti.pengurusan_inventori.sbom.show', $sbom->id) }}" style="cursor: pointer; background-color: #f9f9f9;" onmouseover="this.style.backgroundColor='#e9ecef';" onmouseout="this.style.backgroundColor='#f9f9f9';">
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $sbom->komponen_versi }}</td>
                             <td>{{ $sbom->sub_komponen }}</td>

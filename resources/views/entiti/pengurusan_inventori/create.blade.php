@@ -16,62 +16,35 @@
 
 <!-- Form Card -->
 <div class="card-box">
-    <form method="POST" action="{{ route('entiti.pengurusan_inventori.store') }}">
+    <form action="{{ route('entiti.pengurusan_inventori.store') }}" method="POST">
         @csrf
 
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="nama_inventori" class="form-label">Nama Inventori</label>
-                <input type="text" class="form-control @error('nama_inventori') is-invalid @enderror"
-                       id="nama_inventori" name="nama_inventori" value="{{ old('nama_inventori') }}" required>
-                @error('nama_inventori')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="kategori" class="form-label">Kategori</label>
-                <input type="text" class="form-control @error('kategori') is-invalid @enderror"
-                       id="kategori" name="kategori" value="{{ old('kategori') }}">
-                @error('kategori')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            </div>
+        <div class="form-group">
+            <label for="jenis_aset">Jenis Aset</label>
+            <input type="text" name="jenis_aset" id="jenis_aset" class="form-control" required>
         </div>
 
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="bilangan" class="form-label">Bilangan</label>
-                <input type="number" class="form-control @error('bilangan') is-invalid @enderror"
-                       id="bilangan" name="bilangan" value="{{ old('bilangan', 0) }}" min="0">
-                @error('bilangan')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="lokasi" class="form-label">Lokasi</label>
-                <input type="text" class="form-control @error('lokasi') is-invalid @enderror"
-                       id="lokasi" name="lokasi" value="{{ old('lokasi') }}">
-                @error('lokasi')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            </div>
+        <div class="form-group">
+            <label for="nama_aset">Nama Aset</label>
+            <input type="text" name="nama_aset" id="nama_aset" class="form-control" required>
         </div>
 
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="status" class="form-label">Status</label>
-                <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
-                    <option value="">Pilih Status</option>
-                    <option value="aktif" {{ old('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                    <option value="tidak_aktif" {{ old('status') == 'tidak_aktif' ? 'selected' : '' }}>Tidak Aktif</option>
-                </select>
-                @error('status')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            </div>
+        <div class="form-group">
+            <label for="lokasi_pemilik">Lokasi Pemilik</label>
+            <input type="text" name="lokasi_pemilik" id="lokasi_pemilik" class="form-control" required>
         </div>
 
-        <div class="mb-3">
-            <label for="keterangan" class="form-label">Keterangan</label>
-            <textarea class="form-control @error('keterangan') is-invalid @enderror"
-                      id="keterangan" name="keterangan" rows="4">{{ old('keterangan') }}</textarea>
-            @error('keterangan')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        <div class="form-group">
+            <label for="sistem_legasi">Sistem Legasi</label>
+            <input type="text" name="sistem_legasi" id="sistem_legasi" class="form-control">
         </div>
 
-        <div class="d-flex justify-content-end gap-2 mt-4">
-            <button type="submit" class="btn btn-orange">Simpan</button>
-            <a href="{{ route('entiti.pengurusan_inventori.index') }}" class="btn btn-grey">Batal</a>
+        <div class="form-group">
+            <label for="catatan">Catatan</label>
+            <textarea name="catatan" id="catatan" class="form-control" placeholder="Optional"></textarea>
         </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
 

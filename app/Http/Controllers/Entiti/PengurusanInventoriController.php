@@ -27,7 +27,8 @@ class PengurusanInventoriController extends Controller
      */
     public function create()
     {
-        return view('entiti.pengurusan_inventori.create');
+        $user = auth()->user();
+        return view('entiti.pengurusan_inventori.create', ['agensi_id' => $user->agensi_id]);
     }
 
     /**
@@ -36,24 +37,26 @@ class PengurusanInventoriController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_inventori' => 'required|string|max:255',
-            'kategori' => 'nullable|string|max:128',
-            'bilangan' => 'required|integer|min:0',
-            'lokasi' => 'nullable|string|max:255',
-            'status' => 'required|in:aktif,tidak_aktif',
-            'keterangan' => 'nullable|string',
+            'jenis_aset' => 'required|string|max:255',
+            'nama_aset' => 'required|string|max:255',
+            'lokasi_pemilik' => 'required|string|max:255',
+            'sistem_legasi' => 'nullable|string|max:255',
+            'catatan' => 'nullable|string',
         ]);
 
+        $user = auth()->user();
+
         Inventori::create([
-            'nama_aset' => $validated['nama_inventori'],
-            'jenis_aset' => $validated['kategori'] ?? 'Umum',
-            'lokasi_pemilik' => $validated['lokasi'] ?? null,
-            'sistem_legasi' => $validated['bilangan'] ?? 0,
-            'catatan' => $validated['keterangan'] ?? null,
+            'agensi_id' => $user->agensi_id,
+            'jenis_aset' => $validated['jenis_aset'],
+            'nama_aset' => $validated['nama_aset'],
+            'lokasi_pemilik' => $validated['lokasi_pemilik'],
+            'sistem_legasi' => $validated['sistem_legasi'],
+            'catatan' => $validated['catatan'],
         ]);
 
         return redirect()->route('entiti.pengurusan_inventori.index')
-                       ->with('success', 'Inventori berjaya ditambah');
+                       ->with('success', 'Inventori berjaya ditambah.');
     }
 
     /**
