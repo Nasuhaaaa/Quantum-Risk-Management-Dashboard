@@ -15,8 +15,11 @@ class RegisterRisk extends Model
         'punca_risiko_id',
         'impak',
         'kemungkinan',
+        'impak_id',
+        'kebarangkalian_id',
         'skor_risiko',
         'tahap_risiko',
+        'tahap_risiko_id',
         'kawalan_sedia_ada',
         'pelan_mitigasi'
     ];
@@ -34,5 +37,20 @@ class RegisterRisk extends Model
     public function puncaRisiko()
     {
         return $this->belongsTo(PuncaRisiko::class, 'punca_risiko_id');
+    }
+
+    public function impak()
+    {
+        return $this->belongsTo(Impak::class, 'impak_id');
+    }
+
+    public function kebarangkalian()
+    {
+        return $this->belongsTo(Kebarangkalian::class, 'kebarangkalian_id');
+    }
+
+    public function tahapRisiko()
+    {
+        return $this->belongsTo(TahapRisiko::class, 'tahap_risiko_id');
     }
 }

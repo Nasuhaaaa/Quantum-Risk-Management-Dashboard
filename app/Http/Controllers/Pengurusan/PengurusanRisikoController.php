@@ -16,7 +16,8 @@ class PengurusanRisikoController extends Controller
         $query = RegisterRisk::with([
             'risiko',
             'risiko.subKategoriRisiko',
-            'risiko.subKategoriRisiko.kategoriRisiko'
+            'risiko.subKategoriRisiko.kategoriRisiko',
+            'tahapRisiko'
         ]);
 
         // Search by risk name
@@ -26,9 +27,14 @@ class PengurusanRisikoController extends Controller
             });
         }
 
-        // Filter by risk level (tahap)
+        // Note: tahap filtering will be done after collection load
+        $risks = $query->paginate(10);
+
+        // Filter by risk level (tahap) in memory
         if ($request->filled('tahap')) {
-            $query->where('tahap_risiko', $request->tahap);
+            $risks = $risks->filter(function($item) use ($request) {
+                return $item->tahapRisiko?->tahap_risiko === $request->tahap;
+            });
         }
 
         // Filter by status
@@ -105,15 +111,16 @@ class PengurusanRisikoController extends Controller
             'risiko',
             'risiko.subKategoriRisiko',
             'risiko.subKategoriRisiko.kategoriRisiko',
-            'puncaRisiko'
+            'puncaRisiko',
+            'tahapRisiko'
         ])->get();
 
         // Calculate statistics
         $stats = [
             'total' => $risks->count(),
-            'tinggi' => $risks->where('tahap_risiko', 'Tinggi')->count(),
-            'sederhana' => $risks->where('tahap_risiko', 'Sederhana')->count(),
-            'rendah' => $risks->where('tahap_risiko', 'Rendah')->count(),
+            'tinggi' => $risks->filter(fn($r) => $r->tahapRisiko?->tahap_risiko === 'Tinggi')->count(),
+            'sederhana' => $risks->filter(fn($r) => $r->tahapRisiko?->tahap_risiko === 'Sederhana')->count(),
+            'rendah' => $risks->filter(fn($r) => $r->tahapRisiko?->tahap_risiko === 'Rendah')->count(),
         ];
 
         // Chart data

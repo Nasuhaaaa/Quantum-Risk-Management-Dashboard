@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\RegisterRisk;
 use App\Models\User;
 use App\Models\Agensi;
+use App\Models\Sektor;
 
 class DashboardController extends Controller
 {
@@ -24,27 +25,17 @@ class DashboardController extends Controller
 
             \Log::info('User role', ['role' => $currentRole, 'jenis_pengguna' => $jenisPengguna]);
 
-            // Define sectors
-            $sectors = [
-            'Sektor Teknologi',
-            'Sektor Operasi',
-            'Sektor Kewangan',
-            'Sektor Perundangan',
-            'Sektor Keselamatan',
-            'Sektor Perhubungan',
-            'Sektor Latihan',
-            'Sektor Infrastruktur',
-            'Sektor Aset',
-            'Sektor Polisi',
-            'Sektor Perancangan',
-        ];
+            // Get sectors from database
+            $sectors = Sektor::pluck('nama_sektor')->toArray();
 
         // Build base query with role-based filtering
         $riskQuery = RegisterRisk::query();
 
         if ($currentRole === 'entiti') {
-            // Entiti hanya lihat risiko agensi mereka sendiri
-            $riskQuery->where('pemilik_risiko', $user->agensi?->nama_agensi ?? $user->agensi_id);
+            // Entiti hanya lihat risiko agensi mereka sendiri through cbom -> sbom -> inventori -> agensi_id
+            $riskQuery->whereHas('cbom.sbom.inventori', function($q) use ($user) {
+                $q->where('agensi_id', $user->agensi_id);
+            });
         } elseif ($currentRole === 'ketua_sektor') {
             // Ketua Sektor lihat risiko dari semua agensi dalam sektor mereka
             $userSektor = $user->agensi?->sektor;
@@ -57,15 +48,23 @@ class DashboardController extends Controller
 
         $totalRisiko = (clone $riskQuery)->count();
         $totalAset = (clone $riskQuery)->select('pemilik_risiko')->distinct()->count();
-        $jumlahRisikoTinggi = (clone $riskQuery)->where('tahap_risiko', 'Tinggi')->count();
-        $jumlahRisikoSederhana = (clone $riskQuery)->where('tahap_risiko', 'Sederhana')->count();
-        $jumlahRisikoRendah = (clone $riskQuery)->where('tahap_risiko', 'Rendah')->count();
 
-        $riskLevels = (clone $riskQuery)
-            ->select('tahap_risiko', DB::raw('count(*) as total'))
-            ->groupBy('tahap_risiko')
-            ->orderByDesc('total')
-            ->get();
+        // Get risks for tahap calculations
+        $allRisks = (clone $riskQuery)->with('tahapRisiko')->get();
+
+        // Dynamically count all tahap_risiko levels
+        $riskCountsByLevel = $allRisks->groupBy(fn($r) => $r->tahapRisiko?->tahap_risiko ?? 'Unknown')->map(fn($items) => $items->count());
+        $jumlahRisikoTinggi = $riskCountsByLevel->get('Tinggi', 0);
+        $jumlahRisikoSederhana = $riskCountsByLevel->get('Sederhana', 0);
+        $jumlahRisikoRendah = $riskCountsByLevel->get('Rendah', 0);
+        $jumlahRisikoSangatTinggi = $riskCountsByLevel->get('Sangat Tinggi', 0);
+        $jumlahRisikoSangatRendah = $riskCountsByLevel->get('Sangat Rendah', 0);
+
+        // Group risk levels by tahapRisiko relationship
+        $riskLevels = $allRisks
+            ->groupBy(fn($r) => $r->tahapRisiko?->tahap_risiko ?? 'Unknown')
+            ->map(fn($items) => (object)['tahap_risiko' => $items[0]->tahapRisiko?->tahap_risiko ?? 'Unknown', 'total' => $items->count()])
+            ->values();
 
         $topRisks = (clone $riskQuery)
             ->with('risiko')
@@ -88,51 +87,53 @@ class DashboardController extends Controller
             ->get();
 
         // Get risk levels per entity with their highest risk status
-        $entitiRisiko = (clone $riskQuery)
-            ->select('pemilik_risiko', 'tahap_risiko', DB::raw('avg(skor_risiko) as purata_skor'), DB::raw('max(skor_risiko) as max_skor'), DB::raw('max(created_at) as last_review'))
-            ->groupBy('pemilik_risiko', 'tahap_risiko')
+        $entitiRisikoDirect = (clone $riskQuery)
+            ->select('pemilik_risiko', 'tahap_risiko_id', DB::raw('avg(skor_risiko) as purata_skor'), DB::raw('max(skor_risiko) as max_skor'), DB::raw('max(created_at) as last_review'))
+            ->with('tahapRisiko')
+            ->groupBy('pemilik_risiko', 'tahap_risiko_id')
             ->orderByDesc('purata_skor')
-            ->take(5)
+            ->take(10)
             ->get();
 
+        // Map to add tahap_risiko property from relationship
+        $entitiRisiko = $entitiRisikoDirect->map(function($item) {
+            $item->tahap_risiko = $item->tahapRisiko?->tahap_risiko ?? 'Unknown';
+            return $item;
+        })->take(5);
+
         // Get high-level risk status for Entiti (highest risk level from their entries)
-        $entitiHighestRiskLevel = (clone $riskQuery)
-            ->select('tahap_risiko', DB::raw('count(*) as total'))
-            ->groupBy('tahap_risiko')
-            ->orderByDesc('total')
+        $entitiHighestRisksRaw = (clone $riskQuery)
+            ->with('tahapRisiko')
+            ->orderByDesc('skor_risiko')
             ->first();
+
+        $entitiHighestRiskLevel = $entitiHighestRisksRaw
+            ? (object)['tahap_risiko' => $entitiHighestRisksRaw->tahapRisiko?->tahap_risiko ?? 'Unknown', 'total' => 1]
+            : null;
 
         // For Pengurusan: Get sector-wise risk data
         $sectorRiskData = [];
-        $sectors = [
-            'Sektor Teknologi',
-            'Sektor Operasi',
-            'Sektor Kewangan',
-            'Sektor Perundangan',
-            'Sektor Keselamatan',
-            'Sektor Perhubungan',
-            'Sektor Latihan',
-            'Sektor Infrastruktur',
-            'Sektor Aset',
-            'Sektor Polisi',
-            'Sektor Perancangan',
-        ];
 
         if ($currentRole === 'pengurusan' || $currentRole === 'admin') {
             foreach ($sectors as $sector) {
-                // Get distinct agencies in this sector (by name pattern matching)
-                $agenciInSector = Agensi::whereRaw("LOWER(nama_agensi) LIKE LOWER(?)", ['%' . strtolower($sector) . '%'])
-                    ->pluck('nama_agensi')
-                    ->toArray();
+                // Get distinct agencies in this sector by sektor_id
+                $sektorId = Sektor::where('nama_sektor', $sector)->first()?->id;
 
-                // Get highest risk level for agensi in this sector
-                if (!empty($agenciInSector)) {
-                    $sectorRisk = RegisterRisk::whereIn('pemilik_risiko', $agenciInSector)
-                        ->select('tahap_risiko', DB::raw('count(*) as total'))
-                        ->groupBy('tahap_risiko')
-                        ->orderByDesc('total')
-                        ->first();
-                    $sectorRiskData[$sector] = $sectorRisk?->tahap_risiko ?? 'Tiada Data';
+                if ($sektorId) {
+                    $agenciInSector = Agensi::where('sektor_id', $sektorId)
+                        ->pluck('nama_agensi')
+                        ->toArray();
+
+                    // Get highest risk level for agensi in this sector
+                    if (!empty($agenciInSector)) {
+                        $sectorRisksData = RegisterRisk::whereIn('pemilik_risiko', $agenciInSector)
+                            ->with('tahapRisiko')
+                            ->orderByDesc('skor_risiko')
+                            ->first();
+                        $sectorRiskData[$sector] = $sectorRisksData?->tahapRisiko?->tahap_risiko ?? 'Tiada Data';
+                    } else {
+                        $sectorRiskData[$sector] = 'Tiada Data';
+                    }
                 } else {
                     $sectorRiskData[$sector] = 'Tiada Data';
                 }
@@ -165,6 +166,8 @@ class DashboardController extends Controller
             'jumlahRisikoTinggi',
             'jumlahRisikoSederhana',
             'jumlahRisikoRendah',
+            'jumlahRisikoSangatTinggi',
+            'jumlahRisikoSangatRendah',
             'riskLevels',
             'topRisks',
             'topAttention',

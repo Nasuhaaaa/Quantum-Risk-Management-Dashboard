@@ -11,6 +11,7 @@ class CBOM extends Model
 
     protected $fillable = [
         'sbom_id',
+        'primitif_kriptografi',
         'algoritma_kriptografi',
         'panjang_kunci',
         'tujuan_penggunaan',

@@ -18,7 +18,7 @@ class PengurusanRisikoController extends Controller
         // Build query for risks owned by user's entity
         $query = RegisterRisk::query()
             ->where('pemilik_risiko', $user->agensi?->nama_agensi)
-            ->with(['risiko', 'risiko.subKategoriRisiko', 'risiko.subKategoriRisiko.kategoriRisiko']);
+            ->with(['risiko', 'risiko.subKategoriRisiko', 'risiko.subKategoriRisiko.kategoriRisiko', 'tahapRisiko']);
 
         // Search by risk name
         if ($request->filled('search')) {
@@ -27,9 +27,14 @@ class PengurusanRisikoController extends Controller
             });
         }
 
-        // Filter by risk level
+        // Note: tahap filtering will be done after collection load
+        $risks = $query->paginate(10);
+
+        // Filter by risk level (in memory)
         if ($request->filled('tahap')) {
-            $query->where('tahap_risiko', $request->tahap);
+            $risks = $risks->filter(function($item) use ($request) {
+                return $item->tahapRisiko?->tahap_risiko === $request->tahap;
+            });
         }
 
         // Filter by approval status
@@ -139,15 +144,15 @@ class PengurusanRisikoController extends Controller
         $user = auth()->user();
 
         $risks = RegisterRisk::where('pemilik_risiko', $user->agensi?->nama_agensi)
-            ->with(['risiko', 'risiko.subKategoriRisiko', 'puncaRisiko'])
+            ->with(['risiko', 'risiko.subKategoriRisiko', 'puncaRisiko', 'tahapRisiko'])
             ->get();
 
         // Calculate statistics
         $stats = [
             'total' => $risks->count(),
-            'tinggi' => $risks->where('tahap_risiko', 'Tinggi')->count(),
-            'sederhana' => $risks->where('tahap_risiko', 'Sederhana')->count(),
-            'rendah' => $risks->where('tahap_risiko', 'Rendah')->count(),
+            'tinggi' => $risks->filter(fn($r) => $r->tahapRisiko?->tahap_risiko === 'Tinggi')->count(),
+            'sederhana' => $risks->filter(fn($r) => $r->tahapRisiko?->tahap_risiko === 'Sederhana')->count(),
+            'rendah' => $risks->filter(fn($r) => $r->tahapRisiko?->tahap_risiko === 'Rendah')->count(),
         ];
 
         // Chart data

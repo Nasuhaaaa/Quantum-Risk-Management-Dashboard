@@ -63,7 +63,13 @@
 
 <!-- CBOM List Section -->
 <div class="card-box mt-4">
-    <h5>Senarai CBOM</h5>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold">Senarai CBOM</h5>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="{{ route('entiti.pengurusan_inventori.cbom.create', ['sbom_id' => $sbom->id]) }}" class="btn btn-orange w-100">Tambah CBOM</a>
+        </div>
+    </div>
 
     @if($cboms->isEmpty())
         <p class="text-muted">Tiada CBOM yang berkaitan dengan SBOM ini.</p>
@@ -73,6 +79,7 @@
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>Primitif Kriptografi</th>
                         <th>Algoritma Kriptografi</th>
                         <th>Panjang Kunci</th>
                         <th>Tujuan Penggunaan</th>
@@ -85,6 +92,7 @@
                     @foreach($cboms as $index => $cbom)
                         <tr class="clickable-row" data-href="{{ route('entiti.pengurusan_risiko.create', ['cbom_id' => $cbom->id]) }}" style="cursor: pointer; background-color: #f9f9f9;" onmouseover="this.style.backgroundColor='#e9ecef';" onmouseout="this.style.backgroundColor='#f9f9f9';">
                             <td>{{ $index + 1 }}</td>
+                            <td>{{ $cbom->primitif_kriptografi }}</td>
                             <td>{{ $cbom->algoritma_kriptografi }}</td>
                             <td>{{ $cbom->panjang_kunci }}</td>
                             <td>{{ $cbom->tujuan_penggunaan }}</td>

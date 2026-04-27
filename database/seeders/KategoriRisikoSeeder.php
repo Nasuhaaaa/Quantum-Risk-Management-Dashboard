@@ -10,16 +10,25 @@ class KategoriRisikoSeeder extends Seeder
     public function run(): void
     {
         KategoriRisiko::create([
-            'kategori_risiko' => 'Kekuatan Algoritma Kriptografi',
+            'kategori_risiko' => 'PKI & Sijil Digital',
         ]);
 
         KategoriRisiko::create([
-            'kategori_risiko' => 'Keterlihatan Aset Kriptografi',
+            'kategori_risiko' => 'Rangkaian & Protokol',
         ]);
 
         KategoriRisiko::create([
-            'kategori_risiko' => 'Pengurusan Kunci',
+            'kategori_risiko' => 'Pelaksanaan Sistem',
         ]);
+
+        KategoriRisiko::create([
+            'kategori_risiko' => 'Vendor & Rantaian Bekalan',
+        ]);
+
+        KategoriRisiko::create([
+            'kategori_risiko' => 'Tadbir Urus & Kitar Hayat',
+        ]);
+
 
         $this->command->info('KategoriRisiko seeded successfully!');
     }

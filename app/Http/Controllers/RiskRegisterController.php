@@ -8,6 +8,9 @@ use App\Models\SubKategoriRisiko;
 use App\Models\Risiko;
 use App\Models\KategoriPuncaRisiko;
 use App\Models\PuncaRisiko;
+use App\Models\Impak;
+use App\Models\Kebarangkalian;
+use App\Models\TahapRisiko;
 use Illuminate\Http\Request;
 use App\Models\CBOM;
 
@@ -23,6 +26,9 @@ class RiskRegisterController extends Controller
         $risiko = Risiko::all();
         $kategoriPuncaRisiko = KategoriPuncaRisiko::all();
         $puncaRisiko = PuncaRisiko::all();
+        $impak = Impak::all();
+        $kebarangkalian = Kebarangkalian::all();
+        $tahapRisiko = TahapRisiko::all();
 
         $cbom = null;
 
@@ -40,6 +46,9 @@ class RiskRegisterController extends Controller
             'risiko',
             'kategoriPuncaRisiko',
             'puncaRisiko',
+            'impak',
+            'kebarangkalian',
+            'tahapRisiko',
             'cbom'
         ));
     }
@@ -52,23 +61,21 @@ class RiskRegisterController extends Controller
         $user = auth()->user();
 
         $validated = $request->validate([
-            'nama_risiko' => 'required|string|max:255',
-            'kategori_risiko_id' => 'required|exists:kategori_risiko,id',
-            'sub_kategori_risiko_id' => 'required|exists:sub_kategori_risiko,id',
+            'cbom_id' => 'required|exists:cbom,id',
+            'risiko_id' => 'required|exists:risiko,id',
             'pemilik_risiko' => 'required|string|max:255',
-            'tahap_risiko' => 'required|in:Tinggi,Sederhana,Rendah',
-            'kemungkinan' => 'required|integer|min:1|max:5',
-            'kesan' => 'required|integer|min:1|max:5',
-            'penerangan' => 'nullable|string',
+            'punca_risiko_id' => 'required|exists:punca_risiko,id',
+            'impak_id' => 'required|exists:impak,impak_id',
+            'kebarangkalian_id' => 'required|exists:kebarangkalian,kebarangkalian_id',
+            'skor_risiko' => 'required|integer|min:1|max:25',
+            'tahap_risiko_id' => 'required|exists:tahap_risiko,tahap_risiko_id',
+            'kawalan_sedia_ada' => 'nullable|string',
+            'pelan_mitigasi' => 'nullable|string',
         ]);
-
-        // Set agensi_id from authenticated user
-        $validated['agensi_id'] = $user->agensi_id;
-        $validated['status_persetujuan'] = null; // Default to pending approval
 
         RegisterRisk::create($validated);
 
-        return redirect()->route('entiti.pengurusan_risiko.index')
+        return redirect()->route('entiti.pengurusan_inventori.show', ['id' => CBOM::find($validated['cbom_id'])->sbom->inventori_id])
                        ->with('success', 'Risiko berjaya didaftarkan');
     }
 }

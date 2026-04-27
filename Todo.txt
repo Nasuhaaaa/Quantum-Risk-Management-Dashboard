@@ -87,6 +87,19 @@ Table in Database
     - Jenis_Pengguna
     - Keterangan
 
+7. impak
+    - Impak_ID (PK)
+    - Tahap (Sangat Rendah, Rendah, Sederhana, Tinggi, Sangat Tinggi)
+    - Skala (1-5)
+8. kebarangkalian
+    - Kebarangkalian_ID (PK)
+    - Tahap (Sangat Rendah, Rendah, Sederhana, Tinggi, Sangat Tinggi)
+    - Skala (1-5)
+9. Tahap Risiko
+    - Tahap_Risiko_ID
+    - Skor
+    - Tahap Risiko
+
 Menu
 1. Entiti (Agensi)
     - Pengurusan Risiko

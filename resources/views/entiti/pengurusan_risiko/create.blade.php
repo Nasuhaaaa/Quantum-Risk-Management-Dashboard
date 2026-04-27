@@ -3,12 +3,12 @@
 @section('title', 'Daftar Risiko')
 
 @section('content')
-
+{{-- Daftar Risiko dekat risk-register view --}}
 <!-- Page Header -->
 <div class="dashboard-header">
     <div>
         <h2>Daftar Risiko</h2>
-        <p>Daftar Risiko Kuantum Nasional</p>
+        <p>Daftar Risiko Kuantum Nasional1</p>
     </div>
 </div>
 

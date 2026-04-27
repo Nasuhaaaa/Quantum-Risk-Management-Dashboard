@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\PengurusanSektorController;
 use App\Http\Controllers\Admin\RujakanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Entiti\SBOM\SBOMController;
+use App\Http\Controllers\Entiti\CBOM\CBOMController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -104,6 +105,18 @@ Route::middleware('auth')->group(function () {
 
             // dynamic LAST
             Route::get('{sbom_id}', [SBOMController::class, 'show'])->name('show');
+        });
+
+        // CBOM Routes - Separated from pengurusan_inventori to avoid route conflicts
+        Route::prefix('pengurusan-inventori/cbom')->name('pengurusan_inventori.cbom.')->group(function () {
+            // ✅ ALWAYS put static routes first
+            Route::get('create/{sbom_id}', [CBOMController::class, 'create'])->name('create');
+
+            // POST route BEFORE dynamic GET route
+            Route::post('{sbom_id}', [CBOMController::class, 'store'])->name('store');
+
+            // dynamic LAST
+            Route::get('{cbom_id}', [CBOMController::class, 'show'])->name('show');
         });
 
         // Pengurusan Data
