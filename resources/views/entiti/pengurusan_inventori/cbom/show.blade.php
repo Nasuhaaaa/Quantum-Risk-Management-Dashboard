@@ -50,7 +50,7 @@
 </div>
 
 <div class="mt-4">
-    <a href="{{ route('risk_register.create', ['cbom_id' => $cbom->id]) }}" class="btn btn-orange">Daftar Risiko</a>
+    <a href="{{ route('entiti.pengurusan_risiko.risk_register.create', ['cbom_id' => $cbom->id]) }}" class="btn btn-orange">Daftar Risiko</a>
     <a href="{{ route('entiti.pengurusan_inventori.cbom.index', ['sbom_id' => $cbom->sbom_id]) }}" class="btn btn-secondary">← Kembali ke Senarai CBOM</a>
 </div>
 

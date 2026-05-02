@@ -28,7 +28,7 @@
     </div>
 </div>
 
-<form method="POST" action="{{ route('risk_register.store') }}">
+<form method="POST" action="{{ route('entiti.pengurusan_risiko.risk_register.store') }}">
     @csrf
 
     <!-- Hidden CBOM ID -->

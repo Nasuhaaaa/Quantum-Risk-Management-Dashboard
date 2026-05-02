@@ -3,14 +3,13 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriRisikoController;
 use App\Http\Controllers\RisikoController;
-use App\Http\Controllers\RiskRegisterController;
+use App\Http\Controllers\Entiti\RiskRegisterController;
 use App\Http\Controllers\SubkategoriRisikoController;
 use App\Http\Controllers\KategoriPuncaRisikoController;
 use App\Http\Controllers\PuncaRisikoController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Entiti\PengurusanRisikoController as EntitRisikoController;
 use App\Http\Controllers\Entiti\PengurusanInventoriController as EntitInventoriController;
-use App\Http\Controllers\Entiti\PengurusanDataController as EntitDataController;
 use App\Http\Controllers\KethuaSektor\PengurusanAgensiController as SektorAgensiController;
 use App\Http\Controllers\KethuaSektor\PengurusanRisikoController as SektorRisikoController;
 use App\Http\Controllers\Pengurusan\PengurusanRisikoController as PengurusanRisikoController;
@@ -34,11 +33,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
-    Route::get('/risk-register/create', [RiskRegisterController::class, 'create'])
-        ->name('risk_register.create');
-
-    Route::post('/risk-register', [RiskRegisterController::class, 'store'])
-        ->name('risk_register.store');
 
     Route::get('/kategori-risiko/create', [KategoriRisikoController::class, 'create'])
         ->name('kategori_risiko.create');
@@ -72,16 +66,16 @@ Route::middleware('auth')->group(function () {
 
     // ==================== ENTITI ROUTES ====================
     Route::prefix('entiti')->name('entiti.')->group(function () {
+
         // Pengurusan Risiko
         Route::prefix('pengurusan-risiko')->name('pengurusan_risiko.')->group(function () {
-            Route::get('/', [RiskRegisterController::class, 'index'])->name('index');
-            Route::get('create', [RiskRegisterController::class, 'create'])->name('create');
-            Route::post('/', [RiskRegisterController::class, 'store'])->name('store');
-            Route::get('{id}', [EntitRisikoController::class, 'show'])->name('show');
-            Route::get('{id}/edit', [EntitRisikoController::class, 'edit'])->name('edit');
-            Route::put('{id}', [EntitRisikoController::class, 'update'])->name('update');
-            Route::delete('{id}', [EntitRisikoController::class, 'destroy'])->name('destroy');
-            Route::get('laporan/penilaian', [EntitRisikoController::class, 'laporanPenilaian'])->name('laporan_penilaian');
+            // Risk Register Routes
+            Route::prefix('risk-register')->name('risk_register.')->group(function () {
+                // ✅ ALWAYS put static routes first
+                Route::get('create', [RiskRegisterController::class, 'create'])->name('create');
+                Route::post('/', [RiskRegisterController::class, 'store'])->name('store');
+                Route::get('/', [RiskRegisterController::class, 'index'])->name('index');
+            });
         });
 
         // Pengurusan Inventori
@@ -117,15 +111,6 @@ Route::middleware('auth')->group(function () {
 
             // dynamic LAST
             Route::get('{cbom_id}', [CBOMController::class, 'show'])->name('show');
-        });
-
-        // Pengurusan Data
-        Route::prefix('pengurusan-data')->name('pengurusan_data.')->group(function () {
-            Route::get('/', [EntitDataController::class, 'index'])->name('index');
-            Route::get('import', [EntitDataController::class, 'importForm'])->name('import_form');
-            Route::post('import', [EntitDataController::class, 'import'])->name('import');
-            Route::get('export', [EntitDataController::class, 'exportForm'])->name('export_form');
-            Route::post('export', [EntitDataController::class, 'export'])->name('export');
         });
     });
 

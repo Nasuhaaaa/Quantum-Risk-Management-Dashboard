@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Entiti;
 
+use App\Http\Controllers\Controller;
 use App\Models\RegisterRisk;
 use App\Models\KategoriRisiko;
 use App\Models\SubKategoriRisiko;
@@ -40,7 +41,7 @@ class RiskRegisterController extends Controller
             }
         }
 
-        return view('risk_register.create', compact(
+        return view('entiti.pengurusan_risiko.risk_register.create', compact(
             'kategoriRisiko',
             'subKategoriRisiko',
             'risiko',

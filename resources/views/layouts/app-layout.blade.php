@@ -29,11 +29,11 @@
 
             <div class="sidebar-section">Pengurusan Risiko</div>
             <a href="{{ route('entiti.pengurusan_inventori.index') }}">Daftar Risiko</a>
-            <a href="{{ route('entiti.pengurusan_risiko.index') }}">Senarai Daftar Risiko</a>
-            <a href="{{ route('entiti.pengurusan_risiko.laporan_penilaian') }}">Laporan Penilaian Risiko</a>
+            <a href="{{ route('entiti.pengurusan_risiko.risk_register.index') }}">Senarai Daftar Risiko</a>
+            {{-- <a href="{{ route('entiti.pengurusan_risiko.risk_register.laporan_penilaian') }}">Laporan Penilaian Risiko</a> --}}
 
             <div class="sidebar-section">Lain-lain</div>
-            <a href="{{ route('entiti.pengurusan_data.index') }}">Pengurusan Data</a>
+            {{-- <a href="{{ route('entiti.pengurusan_data.index') }}">Pengurusan Data</a> --}}
         @endif
 
         <!-- KETUA SEKTOR MENU -->

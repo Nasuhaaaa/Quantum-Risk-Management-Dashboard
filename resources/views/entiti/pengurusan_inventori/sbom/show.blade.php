@@ -90,7 +90,7 @@
                 </thead>
                 <tbody>
                     @foreach($cboms as $index => $cbom)
-                        <tr class="clickable-row" data-href="{{ route('entiti.pengurusan_risiko.create', ['cbom_id' => $cbom->id]) }}" style="cursor: pointer; background-color: #f9f9f9;" onmouseover="this.style.backgroundColor='#e9ecef';" onmouseout="this.style.backgroundColor='#f9f9f9';">
+                        <tr class="clickable-row" data-href="{{ route('entiti.pengurusan_risiko.risk_register.create', ['cbom_id' => $cbom->id]) }}" style="cursor: pointer; background-color: #f9f9f9;" onmouseover="this.style.backgroundColor='#e9ecef';" onmouseout="this.style.backgroundColor='#f9f9f9';">
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $cbom->primitif_kriptografi }}</td>
                             <td>{{ $cbom->algoritma_kriptografi }}</td>
