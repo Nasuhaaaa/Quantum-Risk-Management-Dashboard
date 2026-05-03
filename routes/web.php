@@ -75,6 +75,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('create', [RiskRegisterController::class, 'create'])->name('create');
                 Route::post('/', [RiskRegisterController::class, 'store'])->name('store');
                 Route::get('/', [RiskRegisterController::class, 'index'])->name('index');
+                Route::get('{id}', [RiskRegisterController::class, 'show'])->name('show');
             });
         });
 
@@ -191,6 +192,5 @@ Route::middleware('auth')->group(function () {
         });
     });
 });
-
 
 

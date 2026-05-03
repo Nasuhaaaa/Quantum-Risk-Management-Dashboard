@@ -18,6 +18,60 @@ use App\Models\CBOM;
 class RiskRegisterController extends Controller
 {
     /**
+     * Display a listing of risk registrations for the current entity
+     */
+    public function index()
+    {
+        $query = RegisterRisk::with([
+            'cbom.sbom.inventori',
+            'risiko.subKategoriRisiko.kategoriRisiko',
+            'puncaRisiko',
+            'impak',
+            'kebarangkalian',
+            'tahapRisiko',
+        ])->latest();
+
+        $agensiId = auth()->user()?->agensi_id;
+
+        if ($agensiId) {
+            $query->whereHas('cbom.sbom.inventori', function ($q) use ($agensiId) {
+                $q->where('agensi_id', $agensiId);
+            });
+        }
+
+        $risks = $query->paginate(10);
+
+        return view('entiti.pengurusan_risiko.risk_register.index', compact('risks'));
+    }
+
+    /**
+     * Display the specified risk registration for the current entity
+     */
+    public function show($id)
+    {
+        $query = RegisterRisk::with([
+            'cbom.sbom.inventori',
+            'risiko.subKategoriRisiko.kategoriRisiko',
+            'puncaRisiko.kategoriPuncaRisiko',
+            'impak',
+            'kebarangkalian',
+            'tahapRisiko',
+        ]);
+
+        $agensiId = auth()->user()?->agensi_id;
+
+        if ($agensiId) {
+            $query->whereHas('cbom.sbom.inventori', function ($q) use ($agensiId) {
+                $q->where('agensi_id', $agensiId);
+            });
+        }
+
+        $risk = $query->findOrFail($id);
+
+        return view('entiti.pengurusan_risiko.risk_register.show', compact('risk'));
+    }
+
+    /**
      * Show the form for creating a new risk registration
      */
     public function create(Request $request)
