@@ -15,21 +15,21 @@
 <body>
 
 <div class="sidebar">
-    <div class="sidebar-title">PAPAN PEMUKA<br>MIGRASI PQC</div>
+    <div class="sidebar-title">Papan Pemuka<br>Migrasi PQC</div>
 
     @auth
         <!-- Dashboard Link (All Roles) -->
-        <a href="{{ route('dashboard') }}" class="@if(request()->routeIs('dashboard')) active @endif">📊 Papan Pemuka</a>
+        <a href="{{ route('dashboard') }}" class="@if(request()->routeIs('dashboard')) active @endif">Papan Pemuka</a>
 
         <!-- ENTITI MENU -->
         @if(auth()->user()->role_type === 'entiti')
             <div class="sidebar-section">Pengurusan Inventori</div>
-            <a href="{{ route('entiti.pengurusan_inventori.create') }}">Daftar Inventori</a>
-            <a href="{{ route('entiti.pengurusan_inventori.index') }}">Senarai Inventori</a>
+            <a href="{{ route('entiti.pengurusan_inventori.create') }}" class="@if(request()->routeIs('entiti.pengurusan_inventori.create')) active @endif">Daftar Inventori</a>
+            <a href="{{ route('entiti.pengurusan_inventori.index') }}" class="@if(request()->routeIs('entiti.pengurusan_inventori.index')) active @endif">Senarai Inventori</a>
 
             <div class="sidebar-section">Pengurusan Risiko</div>
-            <a href="{{ route('entiti.pengurusan_inventori.index') }}">Daftar Risiko</a>
-            <a href="{{ route('entiti.pengurusan_risiko.risk_register.index') }}">Senarai Daftar Risiko</a>
+            <a href="{{ route('entiti.pengurusan_inventori.index') }}" class="@if(request()->routeIs('entiti.pengurusan_inventori.show') || request()->routeIs('entiti.pengurusan_inventori.sbom.*') || request()->routeIs('entiti.pengurusan_inventori.cbom.*')) active @endif">Daftar Risiko</a>
+            <a href="{{ route('entiti.pengurusan_risiko.risk_register.index') }}" class="@if(request()->routeIs('entiti.pengurusan_risiko.risk_register.*')) active @endif">Senarai Daftar Risiko</a>
             {{-- <a href="{{ route('entiti.pengurusan_risiko.risk_register.laporan_penilaian') }}">Laporan Penilaian Risiko</a> --}}
 
             <div class="sidebar-section">Lain-lain</div>
@@ -39,37 +39,37 @@
         <!-- KETUA SEKTOR MENU -->
         @if(auth()->user()->role_type === 'ketua_sektor')
             <div class="sidebar-section">Pengurusan Risiko</div>
-            <a href="{{ route('sektor.pengurusan_risiko.laporan_penilaian') }}">Jana Laporan Penilaian Risiko</a>
+            <a href="{{ route('sektor.pengurusan_risiko.laporan_penilaian') }}" class="@if(request()->routeIs('sektor.pengurusan_risiko.*')) active @endif">Jana Laporan Penilaian Risiko</a>
 
             <div class="sidebar-section">Pengurusan Agensi</div>
-            <a href="{{ route('sektor.pengurusan_agensi.create') }}">Daftar Entiti</a>
-            <a href="{{ route('sektor.pengurusan_agensi.index') }}">Senarai Entiti</a>
+            <a href="{{ route('sektor.pengurusan_agensi.create') }}" class="@if(request()->routeIs('sektor.pengurusan_agensi.create')) active @endif">Daftar Entiti</a>
+            <a href="{{ route('sektor.pengurusan_agensi.index') }}" class="@if(request()->routeIs('sektor.pengurusan_agensi.index')) active @endif">Senarai Entiti</a>
         @endif
 
         <!-- PENGURUSAN MENU -->
         @if(auth()->user()->role_type === 'pengurusan')
             <div class="sidebar-section">Pengurusan Risiko</div>
-            <a href="{{ route('pengurusan.pengurusan_risiko.index') }}">Senarai Daftar Risiko</a>
-            <a href="{{ route('pengurusan.pengurusan_risiko.index') }}">Semak dan Sahkan Daftar Risiko</a>
-            <a href="{{ route('pengurusan.pengurusan_risiko.laporan_penilaian') }}">Laporan Penilaian Risiko</a>
+            <a href="{{ route('pengurusan.pengurusan_risiko.index') }}" class="@if(request()->routeIs('pengurusan.pengurusan_risiko.index') || request()->routeIs('pengurusan.pengurusan_risiko.show')) active @endif">Senarai Daftar Risiko</a>
+            <a href="{{ route('pengurusan.pengurusan_risiko.index') }}" class="@if(request()->routeIs('pengurusan.pengurusan_risiko.approval*')) active @endif">Semak dan Sahkan Daftar Risiko</a>
+            <a href="{{ route('pengurusan.pengurusan_risiko.laporan_penilaian') }}" class="@if(request()->routeIs('pengurusan.pengurusan_risiko.laporan_penilaian')) active @endif">Laporan Penilaian Risiko</a>
         @endif
 
         <!-- ADMIN MENU -->
         @if(auth()->user()->role_type === 'admin')
             <div class="sidebar-section">Pengurusan Pengguna</div>
-            <a href="{{ route('admin.pengurusan_pengguna.create') }}">Daftar Pengguna</a>
-            <a href="{{ route('admin.pengurusan_pengguna.index') }}">Senarai Pengguna</a>
+            <a href="{{ route('admin.pengurusan_pengguna.create') }}" class="@if(request()->routeIs('admin.pengurusan_pengguna.create')) active @endif">Daftar Pengguna</a>
+            <a href="{{ route('admin.pengurusan_pengguna.index') }}" class="@if(request()->routeIs('admin.pengurusan_pengguna.index')) active @endif">Senarai Pengguna</a>
 
             <div class="sidebar-section">Pengurusan Entiti</div>
-            <a href="{{ route('admin.pengurusan_entiti.create') }}">Daftar Entiti</a>
-            <a href="{{ route('admin.pengurusan_entiti.index') }}">Senarai Entiti</a>
+            <a href="{{ route('admin.pengurusan_entiti.create') }}" class="@if(request()->routeIs('admin.pengurusan_entiti.create')) active @endif">Daftar Entiti</a>
+            <a href="{{ route('admin.pengurusan_entiti.index') }}" class="@if(request()->routeIs('admin.pengurusan_entiti.index')) active @endif">Senarai Entiti</a>
 
             <div class="sidebar-section">Pengurusan Sektor</div>
-            <a href="{{ route('admin.pengurusan_sektor.create') }}">Daftar Sektor</a>
-            <a href="{{ route('admin.pengurusan_sektor.index') }}">Senarai Sektor</a>
+            <a href="{{ route('admin.pengurusan_sektor.create') }}" class="@if(request()->routeIs('admin.pengurusan_sektor.create')) active @endif">Daftar Sektor</a>
+            <a href="{{ route('admin.pengurusan_sektor.index') }}" class="@if(request()->routeIs('admin.pengurusan_sektor.index')) active @endif">Senarai Sektor</a>
 
             <div class="sidebar-section">Rujukan</div>
-            <a href="{{ route('admin.rujukan.index') }}">Pengurusan Rujukan dan Sumber Sokongan</a>
+            <a href="{{ route('admin.rujukan.index') }}" class="@if(request()->routeIs('admin.rujukan.*')) active @endif">Pengurusan Rujukan dan Sumber Sokongan</a>
         @endif
 
         <div class="sidebar-section">Akaun</div>
@@ -78,7 +78,7 @@
 
     @guest
         <div class="sidebar-section">Akses</div>
-        <a href="{{ route('login') }}">Log Masuk</a>
+        <a href="{{ route('login') }}" class="@if(request()->routeIs('login')) active @endif">Log Masuk</a>
     @endguest
 </div>
 

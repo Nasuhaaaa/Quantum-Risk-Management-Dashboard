@@ -18,11 +18,19 @@ class PengurusanRisikoController extends Controller
         $sektor = $user->agensi?->sektor;
 
         // Get all agencies in the sector
-        $agentiIds = Agensi::where('sektor_id', $sektor?->id)->pluck('id');
+        $agensiIds = Agensi::where('sektor_id', $sektor?->id)->pluck('id');
 
         // Build query for risks from entities in this sector
-        $query = RegisterRisk::whereIn('agensi_id', $agentiIds)
-            ->with(['risiko', 'risiko.subKategoriRisiko', 'risiko.subKategoriRisiko.kategoriRisiko', 'tahapRisiko']);
+        $query = RegisterRisk::whereHas('cbom.sbom.inventori', function ($q) use ($agensiIds) {
+                $q->whereIn('agensi_id', $agensiIds);
+            })
+            ->with([
+                'cbom.sbom.inventori.agensi',
+                'risiko',
+                'risiko.subKategoriRisiko',
+                'risiko.subKategoriRisiko.kategoriRisiko',
+                'tahapRisiko'
+            ]);
 
         // Search by risk name
         if ($request->filled('search')) {
@@ -51,11 +59,19 @@ class PengurusanRisikoController extends Controller
      */
     public function show($id)
     {
-        $risk = RegisterRisk::with([
+        $user = auth()->user();
+        $sektor = $user->agensi?->sektor;
+        $agensiIds = Agensi::where('sektor_id', $sektor?->id)->pluck('id');
+
+        $risk = RegisterRisk::whereHas('cbom.sbom.inventori', function ($q) use ($agensiIds) {
+            $q->whereIn('agensi_id', $agensiIds);
+        })->with([
+            'cbom.sbom.inventori.agensi',
             'risiko',
             'risiko.subKategoriRisiko',
             'risiko.subKategoriRisiko.kategoriRisiko',
-            'puncaRisiko'
+            'puncaRisiko',
+            'tahapRisiko'
         ])->findOrFail($id);
 
         return view('ketua_sektor.pengurusan_risiko.show', compact('risk'));
@@ -70,11 +86,13 @@ class PengurusanRisikoController extends Controller
         $sektor = $user->agensi?->sektor;
 
         // Get all agencies in the sector
-        $agentiIds = Agensi::where('sektor_id', $sektor?->id)->pluck('id');
+        $agensiIds = Agensi::where('sektor_id', $sektor?->id)->pluck('id');
 
         // Get all risks from entities in this sector
-        $risks = RegisterRisk::whereIn('agensi_id', $agentiIds)
-            ->with(['risiko', 'risiko.subKategoriRisiko', 'puncaRisiko', 'tahapRisiko'])
+        $risks = RegisterRisk::whereHas('cbom.sbom.inventori', function ($q) use ($agensiIds) {
+                $q->whereIn('agensi_id', $agensiIds);
+            })
+            ->with(['cbom.sbom.inventori.agensi', 'risiko', 'risiko.subKategoriRisiko', 'puncaRisiko', 'tahapRisiko'])
             ->get();
 
         // Organize risks by entity
@@ -96,7 +114,9 @@ class PengurusanRisikoController extends Controller
 
         // Count risks by entity
         foreach ($chartData['entities'] as $entity) {
-            $count = $risks->where('pemilik_risiko', $entity)->count();
+            $count = $risks->filter(function ($risk) use ($entity) {
+                return $risk->cbom?->sbom?->inventori?->agensi?->nama_agensi === $entity;
+            })->count();
             $chartData['entityCounts'][] = $count;
         }
 

@@ -40,8 +40,10 @@ class DashboardController extends Controller
             // Ketua Sektor lihat risiko dari semua agensi dalam sektor mereka
             $userSektor = $user->agensi?->sektor;
             if ($userSektor) {
-                $agenciIds = Agensi::where('sektor_id', $userSektor->id)->pluck('nama_agensi')->toArray();
-                $riskQuery->whereIn('pemilik_risiko', $agenciIds);
+                $agensiIds = Agensi::where('sektor_id', $userSektor->id)->pluck('id');
+                $riskQuery->whereHas('cbom.sbom.inventori', function ($q) use ($agensiIds) {
+                    $q->whereIn('agensi_id', $agensiIds);
+                });
             }
         }
         // Pengurusan and Admin dapat view all (no filter)
@@ -120,13 +122,13 @@ class DashboardController extends Controller
                 $sektorId = Sektor::where('nama_sektor', $sector)->first()?->id;
 
                 if ($sektorId) {
-                    $agenciInSector = Agensi::where('sektor_id', $sektorId)
-                        ->pluck('nama_agensi')
-                        ->toArray();
+                    $agensiIdsInSector = Agensi::where('sektor_id', $sektorId)->pluck('id');
 
                     // Get highest risk level for agensi in this sector
-                    if (!empty($agenciInSector)) {
-                        $sectorRisksData = RegisterRisk::whereIn('pemilik_risiko', $agenciInSector)
+                    if ($agensiIdsInSector->isNotEmpty()) {
+                        $sectorRisksData = RegisterRisk::whereHas('cbom.sbom.inventori', function ($q) use ($agensiIdsInSector) {
+                                $q->whereIn('agensi_id', $agensiIdsInSector);
+                            })
                             ->with('tahapRisiko')
                             ->orderByDesc('skor_risiko')
                             ->first();
