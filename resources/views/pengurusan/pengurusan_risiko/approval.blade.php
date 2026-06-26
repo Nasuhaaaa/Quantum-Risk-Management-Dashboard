@@ -8,7 +8,7 @@
 <div class="dashboard-header">
     <div>
         <h2>Semak & Sahkan Risiko</h2>
-        <p>{{ $risk->nama_risiko }}</p>
+        <p>{{ $risk->risiko?->nama_risiko ?? 'Maklumat Risiko' }}</p>
     </div>
 </div>
 
@@ -21,7 +21,7 @@
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Nama Risiko</label>
-            <p class="mb-0">{{ $risk->nama_risiko }}</p>
+            <p class="mb-0">{{ $risk->risiko?->nama_risiko ?? '-' }}</p>
         </div>
         <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Pemilik Risiko</label>
@@ -33,7 +33,7 @@
         <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Tahap Risiko</label>
             <p class="mb-0">
-                <span class="badge bg-danger">{{ $risk->tahap_risiko }}</span>
+                <span class="badge bg-danger">{{ $risk->tahapRisiko?->tahap_risiko ?? $risk->tahap_risiko ?? '-' }}</span>
             </p>
         </div>
         <div class="col-md-6 mb-3">

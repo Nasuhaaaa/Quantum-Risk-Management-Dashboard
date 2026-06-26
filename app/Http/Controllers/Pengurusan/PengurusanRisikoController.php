@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pengurusan;
 use App\Http\Controllers\Controller;
 use App\Models\RegisterRisk;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class PengurusanRisikoController extends Controller
 {
@@ -13,7 +14,11 @@ class PengurusanRisikoController extends Controller
      */
     public function index(Request $request)
     {
+        $hasApprovalColumns = $this->hasApprovalColumns();
+        $isReviewMode = $request->routeIs('pengurusan.pengurusan_risiko.semak_sahkan');
+
         $query = RegisterRisk::with([
+            'cbom.sbom.inventori.agensi',
             'risiko',
             'risiko.subKategoriRisiko',
             'risiko.subKategoriRisiko.kategoriRisiko',
@@ -27,36 +32,36 @@ class PengurusanRisikoController extends Controller
             });
         }
 
-        // Note: tahap filtering will be done after collection load
-        $risks = $query->paginate(10);
-
-        // Filter by risk level (tahap) in memory
         if ($request->filled('tahap')) {
-            $risks = $risks->filter(function($item) use ($request) {
-                return $item->tahapRisiko?->tahap_risiko === $request->tahap;
+            $query->whereHas('tahapRisiko', function ($q) use ($request) {
+                $q->where('tahap_risiko', $request->tahap);
             });
         }
 
         // Filter by status
-        if ($request->filled('status')) {
+        if ($hasApprovalColumns && $request->filled('status')) {
             $status = $request->status;
             if ($status === 'menunggu') {
-                $query->whereNull('status_persetujuan')
-                      ->orWhere('status_persetujuan', '');
+                $query->where(function ($q) {
+                    $q->whereNull('status_persetujuan')
+                        ->orWhere('status_persetujuan', '');
+                });
             } else {
                 $query->where('status_persetujuan', $status);
             }
         }
 
-        // Default: show pending approval
-        if (!$request->filled('status')) {
-            $query->whereNull('status_persetujuan')
-                  ->orWhere('status_persetujuan', '');
+        // Review mode defaults to pending approval when the current schema supports it.
+        if ($isReviewMode && $hasApprovalColumns && !$request->filled('status')) {
+            $query->where(function ($q) {
+                $q->whereNull('status_persetujuan')
+                    ->orWhere('status_persetujuan', '');
+            });
         }
 
         $risks = $query->paginate(10);
 
-        return view('pengurusan.pengurusan_risiko.index', compact('risks'));
+        return view('pengurusan.pengurusan_risiko.index', compact('risks', 'hasApprovalColumns', 'isReviewMode'));
     }
 
     /**
@@ -64,14 +69,18 @@ class PengurusanRisikoController extends Controller
      */
     public function show($id)
     {
+        $hasApprovalColumns = $this->hasApprovalColumns();
+
         $risk = RegisterRisk::with([
+            'cbom.sbom.inventori.agensi',
             'risiko',
             'risiko.subKategoriRisiko',
             'risiko.subKategoriRisiko.kategoriRisiko',
-            'puncaRisiko'
+            'puncaRisiko',
+            'tahapRisiko'
         ])->findOrFail($id);
 
-        return view('pengurusan.pengurusan_risiko.show', compact('risk'));
+        return view('pengurusan.pengurusan_risiko.show', compact('risk', 'hasApprovalColumns'));
     }
 
     /**
@@ -79,7 +88,12 @@ class PengurusanRisikoController extends Controller
      */
     public function approval($id)
     {
-        $risk = RegisterRisk::findOrFail($id);
+        if (!$this->hasApprovalColumns()) {
+            return redirect()->route('pengurusan.pengurusan_risiko.index')
+                ->with('warning', 'Fungsi persetujuan belum tersedia untuk struktur pangkalan data semasa.');
+        }
+
+        $risk = RegisterRisk::with(['risiko', 'tahapRisiko'])->findOrFail($id);
 
         return view('pengurusan.pengurusan_risiko.approval', compact('risk'));
     }
@@ -89,6 +103,11 @@ class PengurusanRisikoController extends Controller
      */
     public function approve(Request $request, $id)
     {
+        if (!$this->hasApprovalColumns()) {
+            return redirect()->route('pengurusan.pengurusan_risiko.index')
+                ->with('warning', 'Fungsi persetujuan belum tersedia untuk struktur pangkalan data semasa.');
+        }
+
         $risk = RegisterRisk::findOrFail($id);
 
         $validated = $request->validate([
@@ -108,6 +127,7 @@ class PengurusanRisikoController extends Controller
     public function laporanPenilaian()
     {
         $risks = RegisterRisk::with([
+            'cbom.sbom.inventori.agensi',
             'risiko',
             'risiko.subKategoriRisiko',
             'risiko.subKategoriRisiko.kategoriRisiko',
@@ -126,7 +146,7 @@ class PengurusanRisikoController extends Controller
         // Chart data
         $chartData = [
             'categories' => $risks->map(function($risk) {
-                return $risk->risiko?->subKategoriRisiko?->kategoriRisiko?->nama_kategori ?? 'Lain-lain';
+                return $risk->risiko?->subKategoriRisiko?->kategoriRisiko?->kategori_risiko ?? 'Lain-lain';
             })->unique()->values(),
             'counts' => [],
         ];
@@ -134,11 +154,17 @@ class PengurusanRisikoController extends Controller
         // Count risks by category
         foreach ($chartData['categories'] as $category) {
             $count = $risks->filter(function($risk) use ($category) {
-                return $risk->risiko?->subKategoriRisiko?->kategoriRisiko?->nama_kategori === $category;
+                return $risk->risiko?->subKategoriRisiko?->kategoriRisiko?->kategori_risiko === $category;
             })->count();
             $chartData['counts'][] = $count;
         }
 
         return view('pengurusan.pengurusan_risiko.laporan_penilaian', compact('risks', 'stats', 'chartData'));
+    }
+
+    private function hasApprovalColumns(): bool
+    {
+        return Schema::hasColumn('risk_register', 'status_persetujuan')
+            && Schema::hasColumn('risk_register', 'ulasan');
     }
 }

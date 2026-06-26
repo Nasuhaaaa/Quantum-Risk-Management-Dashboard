@@ -120,8 +120,8 @@ Route::middleware('auth')->group(function () {
         // Pengurusan Risiko
         Route::prefix('pengurusan-risiko')->name('pengurusan_risiko.')->group(function () {
             Route::get('/', [SektorRisikoController::class, 'index'])->name('index');
-            Route::get('{id}', [SektorRisikoController::class, 'show'])->name('show');
             Route::get('laporan/penilaian', [SektorRisikoController::class, 'laporanPenilaian'])->name('laporan_penilaian');
+            Route::get('{id}', [SektorRisikoController::class, 'show'])->name('show');
         });
 
         // Pengurusan Agensi
@@ -141,10 +141,11 @@ Route::middleware('auth')->group(function () {
         // Pengurusan Risiko
         Route::prefix('pengurusan-risiko')->name('pengurusan_risiko.')->group(function () {
             Route::get('/', [PengurusanRisikoController::class, 'index'])->name('index');
-            Route::get('{id}', [PengurusanRisikoController::class, 'show'])->name('show');
+            Route::get('semak-sahkan', [PengurusanRisikoController::class, 'index'])->name('semak_sahkan');
+            Route::get('laporan/penilaian', [PengurusanRisikoController::class, 'laporanPenilaian'])->name('laporan_penilaian');
             Route::get('{id}/approval', [PengurusanRisikoController::class, 'approval'])->name('approval_form');
             Route::put('{id}/approve', [PengurusanRisikoController::class, 'approve'])->name('approve');
-            Route::get('laporan/penilaian', [PengurusanRisikoController::class, 'laporanPenilaian'])->name('laporan_penilaian');
+            Route::get('{id}', [PengurusanRisikoController::class, 'show'])->name('show');
         });
     });
 
@@ -192,5 +193,4 @@ Route::middleware('auth')->group(function () {
         });
     });
 });
-
 

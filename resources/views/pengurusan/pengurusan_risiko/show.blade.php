@@ -8,7 +8,7 @@
 <div class="dashboard-header">
     <div>
         <h2>Lihat Butiran Risiko</h2>
-        <p>{{ $risk->nama_risiko }}</p>
+        <p>{{ $risk->risiko?->nama_risiko ?? 'Maklumat Risiko' }}</p>
     </div>
 </div>
 
@@ -21,7 +21,7 @@
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Nama Risiko</label>
-            <p class="mb-0">{{ $risk->nama_risiko }}</p>
+            <p class="mb-0">{{ $risk->risiko?->nama_risiko ?? '-' }}</p>
         </div>
         <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Pemilik Risiko</label>
@@ -32,11 +32,11 @@
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Kategori Risiko</label>
-            <p class="mb-0">{{ $risk->kategoriRisiko?->nama_kategori ?? '-' }}</p>
+            <p class="mb-0">{{ $risk->risiko?->subKategoriRisiko?->kategoriRisiko?->kategori_risiko ?? '-' }}</p>
         </div>
         <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Sub-Kategori</label>
-            <p class="mb-0">{{ $risk->subKategoriRisiko?->nama_sub_kategori ?? '-' }}</p>
+            <p class="mb-0">{{ $risk->risiko?->subKategoriRisiko?->sub_kategori_risiko ?? '-' }}</p>
         </div>
     </div>
 
@@ -44,7 +44,7 @@
         <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Tahap Risiko</label>
             <p class="mb-0">
-                <span class="badge bg-danger">{{ $risk->tahap_risiko }}</span>
+                <span class="badge bg-danger">{{ $risk->tahapRisiko?->tahap_risiko ?? $risk->tahap_risiko ?? '-' }}</span>
             </p>
         </div>
         <div class="col-md-6 mb-3">
@@ -73,9 +73,8 @@
 </div>
 
 <!-- Root Causes Card -->
-@if($risk->puncaRisiko && $risk->puncaRisiko->count() > 0)
 <div class="card-box mb-4">
-    <h5>Punca-Punca Risiko</h5>
+    <h5>Punca Risiko</h5>
 
     <table class="table table-sm table-hover">
         <thead class="table-light">
@@ -86,23 +85,17 @@
             </tr>
         </thead>
         <tbody>
-            @forelse($risk->puncaRisiko as $punca)
             <tr>
-                <td>{{ $punca->nama_punca }}</td>
-                <td>{{ $punca->kategoriPuncaRisiko?->nama_kategori ?? '-' }}</td>
-                <td>{{ $punca->pelan_mitigasi ?? '-' }}</td>
+                <td>{{ $risk->puncaRisiko?->punca_risiko ?? '-' }}</td>
+                <td>{{ $risk->puncaRisiko?->kategoriPuncaRisiko?->kategori_punca_risiko ?? '-' }}</td>
+                <td>{{ $risk->puncaRisiko?->pelan_mitigasi ?? $risk->pelan_mitigasi ?? '-' }}</td>
             </tr>
-            @empty
-            <tr>
-                <td colspan="3" class="text-center text-muted">Tiada punca risiko</td>
-            </tr>
-            @endforelse
         </tbody>
     </table>
 </div>
-@endif
 
 <!-- Status & Action Card -->
+@if($hasApprovalColumns)
 <div class="card-box">
     <h5>Status & Tindakan</h5>
 
@@ -130,10 +123,11 @@
 
     <div class="d-flex justify-content-end gap-2 mt-4">
         @if(!$risk->status_persetujuan || $risk->status_persetujuan === 'tertunda')
-        <a href="{{ route('pengurusan.pengurusan_risiko.approval', $risk->id) }}" class="btn btn-orange">Setuju/Tolak</a>
+        <a href="{{ route('pengurusan.pengurusan_risiko.approval_form', $risk->id) }}" class="btn btn-orange">Setuju/Tolak</a>
         @endif
         <a href="{{ route('pengurusan.pengurusan_risiko.index') }}" class="btn btn-grey">Tutup</a>
     </div>
 </div>
+@endif
 
 @endsection

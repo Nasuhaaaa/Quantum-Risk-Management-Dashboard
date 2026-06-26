@@ -128,6 +128,16 @@ class RiskRegisterController extends Controller
             'pelan_mitigasi' => 'nullable|string',
         ]);
 
+        $impak = Impak::findOrFail($validated['impak_id']);
+        $kebarangkalian = Kebarangkalian::findOrFail($validated['kebarangkalian_id']);
+        $tahapRisiko = TahapRisiko::findOrFail($validated['tahap_risiko_id']);
+
+        $validated['impak'] = $impak->skala;
+        $validated['kemungkinan'] = $kebarangkalian->skala;
+        $validated['tahap_risiko'] = $tahapRisiko->tahap_risiko;
+        $validated['kawalan_sedia_ada'] = $validated['kawalan_sedia_ada'] ?? '';
+        $validated['pelan_mitigasi'] = $validated['pelan_mitigasi'] ?? '';
+
         RegisterRisk::create($validated);
 
         return redirect()->route('entiti.pengurusan_inventori.show', ['id' => CBOM::find($validated['cbom_id'])->sbom->inventori_id])
