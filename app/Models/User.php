@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -25,15 +26,19 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected function casts(): array
-    {
-        return [];
-    }
+    protected $casts = [];
 
     protected function setPasswordAttribute($value): void
     {
+        if ($value === null || $value === '') {
+            return;
+        }
+
         $value = (string) $value;
-        $this->attributes['password'] = password_get_info($value)['algo'] ? $value : bcrypt($value);
+
+        // If value already appears to be a hashed password, store as-is.
+        // Otherwise, hash using the framework `Hash` implementation.
+        $this->attributes['password'] = password_get_info($value)['algo'] ? $value : Hash::make($value);
     }
 
     public function jenisPengguna()

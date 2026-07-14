@@ -230,10 +230,10 @@ body {
     margin-bottom: 8px;
 }
 
-.stat-card .fs-2 {
+    .stat-card .fs-2 {
     color: var(--primary-color);
     font-weight: 800;
-    font-size: 32px !important;
+    font-size: 24px;
     line-height: 1.2;
 }
 
@@ -546,10 +546,73 @@ canvas {
     }
 
     .dashboard-header h2 {
-        font-size: 22px;
+        font-size: 20px;
     }
 
     .dashboard-header p {
+        font-size: 12px;
+    }
+}
+
+/* Pagination: normalize arrow and link sizes to avoid oversized symbols */
+.pagination {
+    display: flex;
+    list-style: none;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 0;
+}
+
+.pagination li {
+    display: inline-block;
+}
+
+.pagination a,
+.pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    min-width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1;
+    color: var(--text-primary);
+    background: transparent;
+    border: 1px solid transparent;
+}
+
+/* Stronger rule for explicit page-link class to override other styles */
+.pagination .page-link {
+    font-size: 13px !important;
+    padding: 6px 10px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+}
+
+.pagination li.disabled span {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.pagination li.active span {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
+/* Ensure arrow glyphs are not stretched by global svg/img rules */
+.pagination span[aria-hidden], .pagination a[aria-hidden] {
+    font-size: 14px;
+}
+
+/* Small screens: reduce pagination size slightly */
+@media (max-width: 480px) {
+    .pagination a, .pagination span {
+        padding: 5px 8px;
+        min-width: 30px;
+        height: 30px;
         font-size: 12px;
     }
 }
