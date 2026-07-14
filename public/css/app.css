@@ -259,6 +259,226 @@ a:hover {
     background-color: #eef6f8;
 }
 
+/* ==================== PQC REPORT DASHBOARD ==================== */
+.pqc-report {
+    --report-navy: #12324a;
+    --report-teal: #0f766e;
+    --report-ink: #0f172a;
+    --report-bg: #f5f7fb;
+    background:
+        radial-gradient(circle at top right, rgba(15, 118, 110, 0.10), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(18, 50, 74, 0.08), transparent 24%),
+        linear-gradient(180deg, #ffffff 0%, #f5f7fb 100%);
+    border-radius: 24px;
+    padding: 1.5rem;
+}
+
+.report-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #12324a 55%, #0f766e 100%);
+    color: #fff;
+    border-radius: 24px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
+    position: relative;
+    overflow: hidden;
+}
+
+.report-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.12), transparent 22%);
+    pointer-events: none;
+}
+
+.report-hero h2,
+.report-hero p,
+.report-hero .badge {
+    position: relative;
+    z-index: 1;
+}
+
+.section-card {
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 20px;
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+}
+
+.section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--report-ink);
+}
+
+.kpi-card {
+    border-radius: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: 0 12px 26px rgba(15, 23, 42, 0.05);
+    height: 100%;
+}
+
+.kpi-value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--report-ink);
+}
+
+.mini-label {
+    font-size: 0.78rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.bar-track {
+    width: 100%;
+    height: 0.75rem;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: inherit;
+}
+
+.matrix-cell {
+    min-width: 72px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.matrix-low {
+    background: #e2f8f3;
+}
+
+.matrix-med {
+    background: #fff4cc;
+}
+
+.matrix-high {
+    background: #ffd6d6;
+}
+
+.timeline-step {
+    display: flex;
+    gap: 0.9rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px dashed rgba(15, 23, 42, 0.12);
+}
+
+.timeline-step:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.timeline-badge {
+    min-width: 92px;
+    height: fit-content;
+    text-align: center;
+    border-radius: 999px;
+    padding: 0.35rem 0.65rem;
+    font-weight: 700;
+}
+
+.control-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.84rem;
+    font-weight: 600;
+}
+
+.report-note {
+    font-size: 0.9rem;
+    color: #334155;
+}
+
+.report-muted-strong {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.report-badge {
+    padding: 0.5rem 0.9rem;
+}
+
+.report-min-width-72 {
+    min-width: 72px;
+}
+
+.report-col-60 {
+    width: 60px;
+}
+
+.report-col-130 {
+    width: 130px;
+}
+
+.report-col-140 {
+    width: 140px;
+}
+
+.bar-fill--risk {
+    background: #b91c1c;
+}
+
+.bar-fill--inventory {
+    background: linear-gradient(90deg, #12324a 0%, #0f766e 100%);
+}
+
+.bar-fill--exposure-very-high {
+    background: #b91c1c;
+}
+
+.bar-fill--exposure-low {
+    background: #15803d;
+}
+
+.bar-fill--function {
+    background: linear-gradient(90deg, #0f172a 0%, #0f766e 100%);
+}
+
+.bar-fill--critical {
+    background: linear-gradient(90deg, #b91c1c 0%, #c27803 100%);
+}
+
+.bar-fill--cause {
+    background: linear-gradient(90deg, #0f766e 0%, #38bdf8 100%);
+}
+
+.bar-fill--level-sangat-tinggi {
+    background: #b91c1c;
+}
+
+.bar-fill--level-tinggi {
+    background: #c27803;
+}
+
+.bar-fill--level-sederhana {
+    background: #0f766e;
+}
+
+.bar-fill--level-rendah {
+    background: #15803d;
+}
+
+.bar-fill--level-sangat-rendah {
+    background: #475569;
+}
+
+.bar-fill--level-tiada-data {
+    background: #94a3b8;
+}
+
+
+
 .table-striped tbody tr:nth-child(odd),
 .table-striped tbody tr:nth-child(even) {
     background-color: var(--surface-bg);

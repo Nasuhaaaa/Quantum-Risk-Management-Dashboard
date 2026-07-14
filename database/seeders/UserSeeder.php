@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
-use App\Models\JenisPengguna;
 use App\Models\Agensi;
+use App\Models\JenisPengguna;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
 {
@@ -16,14 +16,24 @@ class UserSeeder extends Seeder
         $jenisPengguna = JenisPengguna::where('jenis_pengguna', 'Pengurusan')->first()?->role_id;
         $jenisPenggunaAdmin = JenisPengguna::where('jenis_pengguna', 'Sistem Admin')->first()?->role_id;
 
-        $entity1 = Agensi::where('nama_agensi', 'Bank Nasional Malaysia')->first();
+        $agencies = Agensi::all();
 
-        $users = [
-            [
-                'username' => 'entiti.user',
+        $users = [];
+
+        foreach ($agencies as $agency) {
+            $users[] = [
+                'username' => strtolower(str_replace([' ', '&', '/'], ['', '', ''], $agency->nama_agensi)) . '.user',
                 'jenis_pengguna_id' => $jenisPenggunaEntiti,
-                'agensi_id' => $entity1?->id,
-            ],
+                'agensi_id' => $agency->id,
+            ];
+            $users[] = [
+                'username' => strtolower(str_replace([' ', '&', '/'], ['', '', ''], $agency->nama_agensi)) . '.reviewer',
+                'jenis_pengguna_id' => $jenisPenggunaEntiti,
+                'agensi_id' => $agency->id,
+            ];
+        }
+
+        $users = array_merge($users, [
             [
                 'username' => 'sektor.head',
                 'jenis_pengguna_id' => $jenisPenggunaSektor,
@@ -39,7 +49,7 @@ class UserSeeder extends Seeder
                 'jenis_pengguna_id' => $jenisPenggunaAdmin,
                 'agensi_id' => null,
             ],
-        ];
+        ]);
 
         foreach ($users as $user) {
             if (!$user['jenis_pengguna_id']) {

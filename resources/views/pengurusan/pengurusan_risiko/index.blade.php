@@ -33,11 +33,25 @@
             <h5 class="mb-1">{{ $isReviewMode ? 'Risiko untuk Semakan' : 'Pendaftaran Risiko Mengikut Sektor & Entiti' }}</h5>
             <div class="text-muted small">Ringkasan pendaftaran mengikut sektor dan agensi</div>
         </div>
-        <div class="d-flex flex-wrap gap-2">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
             <span class="badge bg-primary-subtle text-primary">Jumlah: {{ $summary['total'] }}</span>
             <span class="badge bg-success-subtle text-success">Diluluskan: {{ $summary['approved'] }}</span>
             <span class="badge bg-danger-subtle text-danger">Ditolak: {{ $summary['rejected'] }}</span>
             <span class="badge bg-warning-subtle text-warning">Dalam semakan: {{ $summary['pending'] }}</span>
+            @if($hasApprovalColumns)
+                <form method="GET" action="{{ $isReviewMode ? route('pengurusan.pengurusan_risiko.semak_sahkan') : route('pengurusan.pengurusan_risiko.index') }}" class="d-flex align-items-center gap-2">
+                    <label class="form-label mb-0 small text-muted">Status kelulusan</label>
+                    <select name="status" class="form-select form-select-sm" style="min-width: 190px;" onchange="this.form.submit()">
+                        <option value="">Semua status</option>
+                        <option value="Diluluskan" {{ $selectedStatus === 'Diluluskan' ? 'selected' : '' }}>Diluluskan</option>
+                        <option value="Ditolak" {{ $selectedStatus === 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
+                        <option value="Dalam Semakan" {{ $selectedStatus === 'Dalam Semakan' ? 'selected' : '' }}>Dalam Semakan</option>
+                    </select>
+                    @if(!empty($selectedStatus))
+                        <a href="{{ $isReviewMode ? route('pengurusan.pengurusan_risiko.semak_sahkan') : route('pengurusan.pengurusan_risiko.index') }}" class="btn btn-outline-secondary btn-sm">Reset</a>
+                    @endif
+                </form>
+            @endif
         </div>
     </div>
 

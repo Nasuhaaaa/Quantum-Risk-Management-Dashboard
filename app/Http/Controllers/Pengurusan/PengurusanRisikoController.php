@@ -43,10 +43,11 @@ class PengurusanRisikoController extends Controller
         // Filter by status
         if ($hasApprovalColumns && $request->filled('status')) {
             $status = $request->status;
-            if ($status === 'menunggu') {
+            if ($status === 'Dalam Semakan') {
                 $query->where(function ($q) {
                     $q->whereNull('status_kelulusan')
-                        ->orWhere('status_kelulusan', '');
+                        ->orWhere('status_kelulusan', '')
+                        ->orWhere('status_kelulusan', 'Dalam Semakan');
                 });
             } else {
                 $query->where('status_kelulusan', $status);
@@ -119,7 +120,9 @@ class PengurusanRisikoController extends Controller
             })->count(),
         ];
 
-        return view('pengurusan.pengurusan_risiko.index', compact('risks', 'groupedRisks', 'summary', 'hasApprovalColumns', 'isReviewMode'));
+        $selectedStatus = $request->get('status');
+
+        return view('pengurusan.pengurusan_risiko.index', compact('risks', 'groupedRisks', 'summary', 'hasApprovalColumns', 'isReviewMode', 'selectedStatus'));
     }
 
     /**
