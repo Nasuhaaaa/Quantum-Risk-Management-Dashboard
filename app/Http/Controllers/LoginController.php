@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Support\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 class LoginController extends Controller
 {
@@ -20,7 +22,17 @@ class LoginController extends Controller
             'password' => 'required|string',
         ]);
 
+        $throttleKey = Str::lower($request->input('username')).'|'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            return back()->withErrors([
+                'username' => "Terlalu banyak percubaan. Sila cuba lagi dalam {$seconds} saat."
+            ])->onlyInput('username');
+        }
+
         if (Auth::attempt(['username' => $validated['username'], 'password' => $validated['password']], $request->boolean('remember'))) {
+            RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
 
             AuditLogger::log(
@@ -31,6 +43,8 @@ class LoginController extends Controller
 
             return redirect()->route('dashboard');
         }
+
+        RateLimiter::hit($throttleKey, 60);
 
         AuditLogger::log(
             action: 'login_failed',
