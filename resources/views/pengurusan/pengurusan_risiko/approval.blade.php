@@ -45,7 +45,7 @@
 
 <!-- Approval Form Card -->
 <div class="card-box">
-    <h5>Status Persetujuan</h5>
+    <h5>Status Kelulusan</h5>
 
     <form method="POST" action="{{ route('pengurusan.pengurusan_risiko.approve', $risk->id) }}">
         @csrf

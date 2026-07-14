@@ -4,7 +4,7 @@
             <p>Selamat datang, {{ $displayName }}. Semak gambaran risiko merentas semua sektor.</p>
         </div>
         <div>
-            <span class="badge dashboard-badge bg-warning">Pengurusan</span>
+            <span class="badge dashboard-badge bg-warning">Pentadbir Bahagian</span>
         </div>
     </div>
 

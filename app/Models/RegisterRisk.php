@@ -21,7 +21,11 @@ class RegisterRisk extends Model
         'tahap_risiko',
         'tahap_risiko_id',
         'kawalan_sedia_ada',
-        'pelan_mitigasi'
+        'pelan_mitigasi',
+        'status_kelulusan',
+        'diluluskan_oleh',
+        'diluluskan_pada',
+        'catatan'
     ];
 
     public function cbom()

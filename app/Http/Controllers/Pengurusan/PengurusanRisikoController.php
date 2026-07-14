@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Pengurusan;
 
 use App\Http\Controllers\Controller;
 use App\Models\RegisterRisk;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Schema;
 
 class PengurusanRisikoController extends Controller
@@ -43,25 +45,81 @@ class PengurusanRisikoController extends Controller
             $status = $request->status;
             if ($status === 'menunggu') {
                 $query->where(function ($q) {
-                    $q->whereNull('status_persetujuan')
-                        ->orWhere('status_persetujuan', '');
+                    $q->whereNull('status_kelulusan')
+                        ->orWhere('status_kelulusan', '');
                 });
             } else {
-                $query->where('status_persetujuan', $status);
+                $query->where('status_kelulusan', $status);
             }
         }
 
         // Review mode defaults to pending approval when the current schema supports it.
         if ($isReviewMode && $hasApprovalColumns && !$request->filled('status')) {
             $query->where(function ($q) {
-                $q->whereNull('status_persetujuan')
-                    ->orWhere('status_persetujuan', '');
+                $q->whereNull('status_kelulusan')
+                    ->orWhere('status_kelulusan', '');
             });
         }
 
-        $risks = $query->paginate(10);
+        $allRisks = $query->get();
+        $page = max(1, (int) $request->get('page', 1));
+        $perPage = 10;
+        $currentPageItems = $allRisks->slice(($page - 1) * $perPage, $perPage)->values();
 
-        return view('pengurusan.pengurusan_risiko.index', compact('risks', 'hasApprovalColumns', 'isReviewMode'));
+        $risks = new LengthAwarePaginator(
+            $currentPageItems,
+            $allRisks->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        $riskCollection = $allRisks;
+
+        $groupedRisks = $riskCollection->groupBy(function ($risk) {
+            $agency = $risk->cbom?->sbom?->inventori?->agensi;
+            return $agency?->sektor?->nama_sektor ?? 'Tidak dikategorikan';
+        })->map(function ($sectorRisks, $sectorName) {
+            $agencies = $sectorRisks->groupBy(function ($risk) {
+                $agency = $risk->cbom?->sbom?->inventori?->agensi;
+                return $agency?->nama_agensi ?? 'Tidak dikenal pasti';
+            })->map(function ($agencyRisks, $agencyName) {
+                $agencyRisks = $agencyRisks->map(function ($risk) {
+                    $risk->approval_status = $risk->status_kelulusan ?? '';
+                    return $risk;
+                });
+
+                return [
+                    'agency_name' => $agencyName,
+                    'risks' => $agencyRisks->values(),
+                    'total' => $agencyRisks->count(),
+                    'approved' => $agencyRisks->where('status_kelulusan', 'Diluluskan')->count(),
+                    'rejected' => $agencyRisks->where('status_kelulusan', 'Ditolak')->count(),
+                    'pending' => $agencyRisks->filter(function ($risk) {
+                        $status = trim((string) ($risk->status_kelulusan ?? ''));
+                        return $status === '' || in_array(strtolower($status), ['dalam semakan', 'menunggu', 'pending'], true);
+                    })->count(),
+                ];
+            })->values();
+
+            return [
+                'sector_name' => $sectorName,
+                'agencies' => $agencies,
+                'total' => $sectorRisks->count(),
+            ];
+        })->values();
+
+        $summary = [
+            'total' => $risks->total(),
+            'approved' => $riskCollection->where('status_kelulusan', 'Diluluskan')->count(),
+            'rejected' => $riskCollection->where('status_kelulusan', 'Ditolak')->count(),
+            'pending' => $riskCollection->filter(function ($risk) {
+                $status = trim((string) ($risk->status_kelulusan ?? ''));
+                return $status === '' || in_array(strtolower($status), ['dalam semakan', 'menunggu', 'pending'], true);
+            })->count(),
+        ];
+
+        return view('pengurusan.pengurusan_risiko.index', compact('risks', 'groupedRisks', 'summary', 'hasApprovalColumns', 'isReviewMode'));
     }
 
     /**
@@ -77,7 +135,9 @@ class PengurusanRisikoController extends Controller
             'risiko.subKategoriRisiko',
             'risiko.subKategoriRisiko.kategoriRisiko',
             'puncaRisiko',
-            'tahapRisiko'
+            'tahapRisiko',
+            'impak',
+            'kebarangkalian'
         ])->findOrFail($id);
 
         return view('pengurusan.pengurusan_risiko.show', compact('risk', 'hasApprovalColumns'));
@@ -111,14 +171,25 @@ class PengurusanRisikoController extends Controller
         $risk = RegisterRisk::findOrFail($id);
 
         $validated = $request->validate([
-            'status_persetujuan' => 'required|in:diluluskan,ditolak,tertunda',
-            'ulasan' => 'nullable|string|max:1000',
+            'status_kelulusan' => 'required|in:Diluluskan,Ditolak',
+            'catatan' => 'nullable|string|max:1000',
         ]);
 
-        $risk->update($validated);
+        if ($validated['status_kelulusan'] === 'Ditolak') {
+            $request->validate([
+                'catatan' => 'required|string|max:1000',
+            ]);
+        }
+
+        $risk->update([
+            'status_kelulusan' => $validated['status_kelulusan'],
+            'diluluskan_oleh' => 'Pentadbir Bahagian',
+            'diluluskan_pada' => Carbon::now(),
+            'catatan' => $request->input('catatan'),
+        ]);
 
         return redirect()->route('pengurusan.pengurusan_risiko.index')
-                       ->with('success', 'Status persetujuan risiko berjaya dikemas kini');
+                       ->with('success', 'Keputusan kelulusan risiko berjaya disimpan');
     }
 
     /**
@@ -164,7 +235,7 @@ class PengurusanRisikoController extends Controller
 
     private function hasApprovalColumns(): bool
     {
-        return Schema::hasColumn('risk_register', 'status_persetujuan')
-            && Schema::hasColumn('risk_register', 'ulasan');
+        return Schema::hasColumn('risk_register', 'status_kelulusan')
+            && Schema::hasColumn('risk_register', 'catatan');
     }
 }

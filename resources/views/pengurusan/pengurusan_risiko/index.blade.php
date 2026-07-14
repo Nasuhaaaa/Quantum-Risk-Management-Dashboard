@@ -1,6 +1,6 @@
 @extends('layouts.app-layout')
 
-@section('title', 'Senarai Daftar Risiko')
+@section('title', 'Rumusan Status Kelulusan Daftar Risiko')
 
 @section('content')
 
@@ -27,9 +27,19 @@
     </div>
 @endif
 
-<!-- Table Card -->
 <div class="card-box">
-    <h5>{{ $isReviewMode ? 'Risiko untuk Semakan' : 'Senarai Daftar Risiko' }}</h5>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <div>
+            <h5 class="mb-1">{{ $isReviewMode ? 'Risiko untuk Semakan' : 'Pendaftaran Risiko Mengikut Sektor & Entiti' }}</h5>
+            <div class="text-muted small">Ringkasan pendaftaran mengikut sektor dan agensi</div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <span class="badge bg-primary-subtle text-primary">Jumlah: {{ $summary['total'] }}</span>
+            <span class="badge bg-success-subtle text-success">Diluluskan: {{ $summary['approved'] }}</span>
+            <span class="badge bg-danger-subtle text-danger">Ditolak: {{ $summary['rejected'] }}</span>
+            <span class="badge bg-warning-subtle text-warning">Dalam semakan: {{ $summary['pending'] }}</span>
+        </div>
+    </div>
 
     @if($isReviewMode && !$hasApprovalColumns)
         <div class="alert alert-warning">
@@ -37,45 +47,61 @@
         </div>
     @endif
 
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Nama Risiko</th>
-                    <th>Entiti</th>
-                    <th>Tahap Risiko</th>
-                    <th>Pemilik</th>
-                    <th>Tarikh Daftar</th>
-                    <th>Tindakan</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($risks as $risk)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $risk->risiko?->nama_risiko ?? '-' }}</td>
-                        <td>{{ $risk->cbom?->sbom?->inventori?->agensi?->nama_agensi ?? '-' }}</td>
-                        <td>
-                            <span class="badge bg-danger">{{ $risk->tahapRisiko?->tahap_risiko ?? $risk->tahap_risiko ?? '-' }}</span>
-                        </td>
-                        <td>{{ $risk->pemilik_risiko ?? '-' }}</td>
-                        <td>{{ $risk->created_at?->format('d/m/Y') ?? '-' }}</td>
-                        <td>
-                            <a href="{{ route('pengurusan.pengurusan_risiko.show', $risk->id) }}" class="btn btn-sm btn-primary">Lihat</a>
-                            @if($hasApprovalColumns)
-                                <a href="{{ route('pengurusan.pengurusan_risiko.approval_form', $risk->id) }}" class="btn btn-sm btn-warning">Setuju/Tolak</a>
-                            @endif
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="text-center text-muted">Tiada data dijumpai</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+    @forelse($groupedRisks as $sector)
+        <div class="border rounded-3 p-3 mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h6 class="fw-bold mb-1 text-primary" style="font-size: 1rem; letter-spacing: 0.02em;">{{ $sector['sector_name'] }}</h6>
+                    <div class="text-muted small">{{ $sector['total'] }} risiko</div>
+                </div>
+                <span class="badge bg-primary-subtle text-primary" style="font-size: 0.8rem; padding: 0.45rem 0.7rem;">{{ count($sector['agencies']) }} agensi</span>
+            </div>
+
+            <div class="row g-3">
+                @foreach($sector['agencies'] as $agency)
+                    <div class="col-lg-6">
+                        <div class="border rounded-3 p-3 h-100" style="border-left: 3px solid #4f83d8 !important; background: linear-gradient(90deg, #f8fbff 0%, #ffffff 100%);">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <div class="fw-bold text-primary" style="font-size: 0.98rem; letter-spacing: 0.01em;">{{ $agency['agency_name'] }}</div>
+                                    <div class="text-muted small">{{ $agency['total'] }} risiko terdaftar</div>
+                                </div>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <span class="badge bg-success-subtle text-success">{{ $agency['approved'] }}</span>
+                                    <span class="badge bg-danger-subtle text-danger">{{ $agency['rejected'] }}</span>
+                                    <span class="badge bg-warning-subtle text-warning">{{ $agency['pending'] }}</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                @foreach($agency['risks'] as $risk)
+                                    <a href="{{ route('pengurusan.pengurusan_risiko.show', $risk->id) }}" class="d-flex justify-content-between align-items-center py-2 border-top text-decoration-none text-dark">
+                                        <div>
+                                            <div class="small fw-semibold">{{ $risk->risiko?->nama_risiko ?? 'Tanpa nama' }}</div>
+                                            <div class="text-muted small">{{ $risk->cbom?->sbom?->inventori?->nama_aset ?? '-' }}</div>
+                                        </div>
+                                        @if(!empty($risk->approval_status))
+                                            <span class="badge {{ $risk->approval_status === 'Diluluskan' ? 'bg-success-subtle text-success' : ($risk->approval_status === 'Ditolak' ? 'bg-danger-subtle text-danger' : 'bg-warning-subtle text-warning') }}">
+                                                {{ $risk->approval_status }}
+                                            </span>
+                                        @else
+                                            <span class="text-muted small">-</span>
+                                        @endif
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @empty
+        <div class="text-center text-muted py-4">Tiada data dijumpai</div>
+    @endforelse
+</div>
+
+<div class="mt-4">
+    {{ $risks->links() }}
 </div>
 
 @endsection

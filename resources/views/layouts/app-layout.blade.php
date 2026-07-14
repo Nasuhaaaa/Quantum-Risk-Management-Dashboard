@@ -49,7 +49,7 @@
         <!-- PENGURUSAN MENU -->
         @if(auth()->user()->role_type === 'pengurusan')
             <div class="sidebar-section">Pengurusan Risiko</div>
-            <a href="{{ route('pengurusan.pengurusan_risiko.index') }}" class="@if(request()->routeIs('pengurusan.pengurusan_risiko.index') || request()->routeIs('pengurusan.pengurusan_risiko.show')) active @endif">Senarai Daftar Risiko</a>
+            <a href="{{ route('pengurusan.pengurusan_risiko.index') }}" class="@if(request()->routeIs('pengurusan.pengurusan_risiko.index') || request()->routeIs('pengurusan.pengurusan_risiko.show')) active @endif">Status Kelulusan Daftar Risiko</a>
             <a href="{{ route('pengurusan.pengurusan_risiko.semak_sahkan') }}" class="@if(request()->routeIs('pengurusan.pengurusan_risiko.semak_sahkan') || request()->routeIs('pengurusan.pengurusan_risiko.approval*')) active @endif">Semak dan Sahkan Daftar Risiko</a>
             <a href="{{ route('pengurusan.pengurusan_risiko.laporan_penilaian') }}" class="@if(request()->routeIs('pengurusan.pengurusan_risiko.laporan_penilaian')) active @endif">Laporan Penilaian Risiko</a>
         @endif
